@@ -1,0 +1,22 @@
+Directory Structure:
+
+/
+index.php
+viewthread.php
+404.php
+xxxx.csv (numbered thread file)
+readme.txt
+.htaccess
+--/images/
+--/thumbs/
+--/templates/
+----/default.css
+----/header.php
+----/input_form.php
+----/post.php
+----/footer_inc.php
+--/scripts/
+----/thread.class.php
+----/thumbnailer.class.php
+----/CSVedit.class.php
+----/IPlogger.class.php
