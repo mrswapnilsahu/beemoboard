@@ -21,13 +21,13 @@ li {list-style: none; margin: 0; padding-left: 0px;}
 
 a:link, a:visited
 {
-	color: #4488EE;
+	color: #8811FF;
 	text-decoration: none;
 }
 
 a:hover, a:active
 {
-	color: #4477EE;
+	color: #8811FF;
 	text-decoration: underline;
 }
 
@@ -80,7 +80,7 @@ a:hover, a:active
 	border-top: 1px solid #000000;
 	padding-top: 8px;
 	margin: 0 auto;
-	background: #deffef;
+	background: #ceffef;
 }
 
 .post {
@@ -92,6 +92,11 @@ a:hover, a:active
 	display: inline-block;
 }
 
+.post .subject {
+	background: #4cbfce;
+	padding: 1px;
+}
+
 .post .nick {
 	background: #6cdfce;
 	padding: 1px;
@@ -101,4 +106,32 @@ a:hover, a:active
 	padding: 1px;
 	background: #deffef;
 	overflow: auto;
+}
+
+.clearer {
+	clear: both;
+}
+
+.separator {
+	padding-top: 4px;
+	padding-bottom: 4px;
+	border-top: 1px dashed #333333;
+}
+
+.aleft {
+	margin-right: 12px;
+	maring-left: 6px;
+	margin-top: 0px;
+	float: left;
+}
+
+.aright {
+	margin-left: 12px;
+	margin-right: 6px;
+	margin-top: 0px;
+	float: right;
+}
+
+.amiddle {
+	vertical-align: middle;
 }

@@ -20,3 +20,7 @@ readme.txt
 ----/thumbnailer.class.php
 ----/CSVedit.class.php
 ----/IPlogger.class.php
+
+The thread data will be contained in numbered CSV files. I suppose the numbers will just increase incrementally as each thread is created. The CSV files containing thread data will be in the following format
+
+ip,time,nick,image,post-content

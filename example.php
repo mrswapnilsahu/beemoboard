@@ -32,12 +32,54 @@ Verification goes here. <br>
 <div id="post_container">
 
 	<div class="post">
+		<div class="subject">
+		Some awesome subject <a class="aright" href="nowhere">Reply</a>
+		</div>
 		<div class="nick">
-		Jaydub
+		Jaydub [Posted: 14:34:55 March 16, 2012]
 		</div>
 		<div class="content">
 		<a href="image/hfm.jpg"><img width="160" height="200" align="left" src="image/hfm.jpg"></a>
-		Some text.
+		Some text. Some text. Some text. Some text. Some text. Some text. Some text.
+		</div>
+	</div>
+	
+	<div class="clearer"></div>
+	
+	<div class="post">
+		<div class="nick">
+		Jaydub [Posted: 14:34:55 March 16, 2012]
+		</div>
+		<div class="content">
+		<a href="image/hfm.jpg"><img width="160" height="200" align="left" src="image/hfm.jpg"></a>
+		Some textual awesomeness. AWESOMENESS I SAY!
+		</div>
+	</div>
+	
+	<div class="separator"></div>
+	
+	<div class="post">
+		<div class="subject">
+		Some awesome subject <a class="aright" href="nowhere">Reply</a>
+		</div>
+		<div class="nick">
+		Jaydub [Posted: 14:34:55 March 16, 2012]
+		</div>
+		<div class="content">
+		<a href="image/hfm.jpg"><img width="160" height="200" align="left" src="image/hfm.jpg"></a>
+		Some text lulz.
+		</div>
+	</div>
+	
+	<div class="clearer"></div>
+	
+	<div class="post">
+		<div class="nick">
+		Jaydub [Posted: 14:34:55 March 16, 2012]
+		</div>
+		<div class="content">
+		<a href="image/hfm.jpg"><img width="160" height="200" align="left" src="image/hfm.jpg"></a>
+		Some text POOPSHOOTZZZZZZZZZ. POOPSHOOTZZZZZZZZZ. 
 		</div>
 	</div>
 
