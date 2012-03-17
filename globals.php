@@ -1,6 +1,6 @@
 <?php
 
-define("DEBUG", 0);
+define("DEBUG", 1);
 
 if (DEBUG == 1)
 {
@@ -21,6 +21,7 @@ define("IMAGES_RELATIVE_PATH", "image/");
 define("THUMBS_RELATIVE_PATH", "thumb/");
 define("SCRIPTS_PATH", ROOT_PATH."scripts/");
 define("DB_PATH", ROOT_PATH."db/");
+define("THREADS_PATH", ROOT_PATH."threads/");
 define("INCLUDES_PATH", ROOT_PATH."templates/");
 define("TEMPLATES_PATH", ROOT_PATH."templates/");
 define("MAX_UPLOAD_SIZE", 1024);
