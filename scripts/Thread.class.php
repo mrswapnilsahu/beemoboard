@@ -12,7 +12,7 @@ class Thread
 	
 	private $errorString = "";
 	private $selectedThreadID = 0;
-	private $selectedThread; //currently selected CSV file/thread object
+	private $thread = 0; //currently selected CSV file/thread object
 	private $threadDir = "";
 	
 	public function __construct($threadDir, $selectThreadID = 0)
@@ -86,6 +86,7 @@ class Thread
 		if (true == file_exists(THREADS_PATH.$ID))
 		{
 			$this->selectedThreadID = $ID;
+			$this->thread = new CSVedit($this->threadDir.$ID, 0);
 			return 1;
 		}
 		else
@@ -96,9 +97,19 @@ class Thread
 	}
 	
 	/* Adds a new post to the end of the currently selected thread. */
-	public function addPost($ip, $nick, $image, $postContent)
+	public function addPost($ip, $nick, $image, $postContent, $time = 0)
 	{
-	
+		if (true == is_object($this->thread))
+		{
+			if ($time == 0)
+				$time = time();
+				
+			$postData = array($ip, $nick, $image, $postContent, $time);
+			$postNum = $this->thread->addRow($postData);
+			return $postNum;
+		}
+		else
+			return 0;
 	} 
 	
 }

@@ -16,7 +16,13 @@ require_once SCRIPTS_PATH."Timer.class.php";
 
 
 $thread = new Thread(THREADS_PATH);
-echo $thread->spawnThread("something")."<br/>";
+$thread->selectThread($thread->spawnThread("something"));
+
+$threadID = 3;
+if ($thread->selectThread($threadID))
+	echo $thread->addPost($_SERVER['REMOTE_ADDR'], "jay", 0, "some random posted shit."); 
+else
+	echo "Thread $threadID doesn't exist!";
 
 
 ?>
