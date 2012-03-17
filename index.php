@@ -14,11 +14,10 @@ include 'templates/header.php';
 require_once SCRIPTS_PATH."Thread.class.php";
 require_once SCRIPTS_PATH."Timer.class.php";
 
-$thread = new Thread(THREADS_PATH);
 
-$tm = new Timer(1);
-echo $thread->spawnThread()."<br/>";
-echo "Elapsed time: ".$tm->getElapsedTime()."<br/>";
+$thread = new Thread(THREADS_PATH);
+echo $thread->spawnThread("something")."<br/>";
+
 
 ?>
 

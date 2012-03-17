@@ -5,11 +5,14 @@ from. This way we can have "over-arching" functions that aren't thread specific,
 but will be useful for maintaining the board as a whole.
 */
 
+require_once('CSVedit.class.php');
+
 class Thread
 {
 	
 	private $errorString = "";
 	private $selectedThreadID = 0;
+	private $selectedThread; //currently selected CSV file/thread object
 	private $threadDir = "";
 	
 	public function __construct($threadDir, $selectThreadID = 0)
@@ -64,11 +67,15 @@ class Thread
 	
 	/* Checks the number of threads and spawns the "next" one. Returns the ID 
 	of the thread it created. */
-	public function spawnThread()
+	public function spawnThread($subject = "")
 	{
 		$threadToSpawn = $this->curThreadID() + 1;
 		
-		touch($this->threadDir.$threadToSpawn);
+		$this->thread = new CSVedit($this->threadDir.$threadToSpawn, 1);
+		$threadData = array("subject" => $subject);
+		$this->thread->addRow($threadData);
+		
+		//touch($this->threadDir.$threadToSpawn);
 		
 		return $threadToSpawn;
 	}
@@ -76,7 +83,16 @@ class Thread
 	/* Selects a thread to perform actions on. */
 	public function selectThread($ID)
 	{
-		$this->selectedThreadFile = $ID;
+		if (true == file_exists(THREADS_PATH.$ID))
+		{
+			$this->selectedThreadID = $ID;
+			return 1;
+		}
+		else
+		{
+			$this->selectedThreadID = 0;
+			return 0;
+		}		
 	}
 	
 	/* Adds a new post to the end of the currently selected thread. */
