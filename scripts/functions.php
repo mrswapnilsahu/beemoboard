@@ -1,7 +1,5 @@
 <?php
 
-//need a function to "validate" image uploads
-
 require_once '../globals.php';
 
 /* This function will validate an image upload. $aFile should be in the format 

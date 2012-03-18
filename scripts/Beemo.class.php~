@@ -125,7 +125,7 @@ class Beemo
 					$imageX = imagesx($imgResource);
 					if ($imageX != false)
 					{
-						if ($aFile['size'] <= ($config['MAX_UPLOAD_SIZE']))
+						if ($aFile['size'] <= (MAX_UPLOAD_SIZE * KILO))
 						{
 							$sErrorString = "";
 							return 1; //image is valid!
