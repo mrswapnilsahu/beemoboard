@@ -104,13 +104,43 @@ class Thread
 			if ($time == 0)
 				$time = time();
 				
-			$postData = array($ip, $nick, $image, $postContent, $time);
+			$postData = array($this->thread->numRows() + 1, $ip, $nick, $image, $postContent, $time);
 			$postNum = $this->thread->addRow($postData);
 			return $postNum;
 		}
 		else
 			return 0;
-	} 
+	}
+	
+	/* Returns the number of posts in the currently selected thread. */
+	public function numPosts()
+	{
+		return $this->thread->numRows();
+	}
+	
+	public function getAllPosts(&$aPostData)
+	{
+		$this->thread->getTable($aPostData, 1);
+		$numPosts =  $this->thread->numRows();
+		return $numPosts;
+	}
+	
+	public function getPost(&$aPostData, $num)
+	{
+		$this->thread->getRow($aPostData, $num);
+	}
+	
+	public function getNewestPosts(&$aPostData, $howMany)
+	{
+		$numPosts = $this->thread->numRows();
+		
+		$startPost = ($numPosts - $howMany) + 1;
+		if ($startPost <= 0)
+			$startPost = 1;
+			
+		for ($i = $startPost; $i <= $numPosts; $i++)
+			 $this->thread->getRow($aPostData[], $i);
+	}
 	
 }
 

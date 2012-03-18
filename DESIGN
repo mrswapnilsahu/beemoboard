@@ -26,4 +26,4 @@ readme.txt
 
 The thread data will be contained in numbered CSV files. I suppose the numbers will just increase incrementally as each thread is created. The CSV files containing thread data will be in the following format
 
-ip,nick,image,post-content,time
+post-num,ip,nick,image,post-content,time
