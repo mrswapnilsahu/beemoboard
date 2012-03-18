@@ -6,8 +6,9 @@ but will be useful for maintaining the board as a whole.
 */
 
 require_once('CSVedit.class.php');
+require_once('Beemo.class.php');
 
-class Thread
+class Thread extends Beemo
 {
 	
 	private $errorString = "";
