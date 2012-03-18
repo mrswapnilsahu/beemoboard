@@ -44,7 +44,14 @@ class Beemo
 	{
 		if (true == file_exists($configFile) && true == is_readable($configfile))
 		{
-			
+			foreach ($this->config as $key => $value)
+			{
+				$configRow = $this->thread->search($key, 0, 0);
+				if ($configRow != -1)
+				{
+					$this->thread->getRow($config[$key], $configRow);
+				}
+			}
 			return 1;
 		}
 		else
@@ -87,7 +94,7 @@ class Beemo
 	public function uploadImage($aFile, $sDest)
 	{
 		$sErrorString = "";
-		if (1 = validateImageUpload($aFile, $sErrorString))
+		if (1 == validateImageUpload($aFile, $sErrorString))
 		{
 			//copy code goes here
 			
@@ -125,7 +132,7 @@ class Beemo
 					$imageX = imagesx($imgResource);
 					if ($imageX != false)
 					{
-						if ($aFile['size'] <= (MAX_UPLOAD_SIZE * KILO))
+						if ($aFile['size'] <= ($config['MAX_UPLOAD_SIZE']))
 						{
 							$sErrorString = "";
 							return 1; //image is valid!

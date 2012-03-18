@@ -18,14 +18,13 @@ class Beemo
 	/* Constructor, will load a non-default config if path is supplied. */
 	public function __construct($configFile = 0)
 	{
-		if ($configfile != 0)
+		if ($configFile === 0)
 		{
-			$this->loadConfig($configFile);
+			//default
 		}
 		else
 		{
-			/* Default config values go here. */
-			
+			$this->loadConfig($configFile);
 		}		
 	}
 	
@@ -42,9 +41,21 @@ class Beemo
 	/* Will load a CSV config file to change the default board settings. */
 	public function loadConfig($configFile)
 	{
-		if (true == file_exists($configFile) && true == is_readable($configfile))
+		if (true == file_exists($configFile) && true == is_readable($configFile))
 		{
-			
+			$this->configdb = new CSVedit($configFile, 0);	
+		
+			foreach ($this->config as $key => $value)
+			{
+				$configRow = $this->configdb->search($key, 0, 0);
+				if ($configRow != -1)
+				{
+					$configData = 0;
+					$this->configdb->getRow($configData, $configRow);
+					$config[$key] = $configData[1];
+					//echo $config[$key]."<br/>";
+				}
+			}
 			return 1;
 		}
 		else
@@ -87,7 +98,7 @@ class Beemo
 	public function uploadImage($aFile, $sDest)
 	{
 		$sErrorString = "";
-		if (1 = validateImageUpload($aFile, $sErrorString))
+		if (1 == validateImageUpload($aFile, $sErrorString))
 		{
 			//copy code goes here
 			
