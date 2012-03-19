@@ -70,6 +70,15 @@ a:hover, a:active
 	text-align: center;
 }
 
+#footer {
+
+}
+
+#footer p {
+	padding-bottom: 0px;
+	margin-bottom: 0px;
+}
+
 #post_form {
 	margin: 0 auto;
 	width: 400px;
@@ -78,23 +87,20 @@ a:hover, a:active
 
 #post_container {
 	border-top: 1px solid #000000;
+	border-bottom: 1px solid #000000;
 	padding-top: 8px;
+	padding-bottom: 8px;
+	padding-left: 8px;
 	margin: 0 auto;
 	background: #ceffef;
 }
 
-#footer {
-
-}
-
-#footer p {
-	padding-bottom: 0px;
-}
-
 .post {
+	min-width: 250px;
+	min-height: 40px;
 	background: #1ae9fc;
 	margin-bottom: 4px;
-	margin-left: 8px;
+	/*margin-left: 8px;*/
 	padding: 2px;
 	overflow: auto;
 	display: inline-block;
@@ -106,12 +112,15 @@ a:hover, a:active
 }
 
 .post .nick {
+	min-height: 16px;
 	background: #6cdfce;
 	padding: 1px;
 }
 
 .post .content {
-	padding: 1px;
+	min-height: 40px;
+	padding: 4px;
+	padding-right: 12px;
 	background: #deffef;
 	overflow: auto;
 }

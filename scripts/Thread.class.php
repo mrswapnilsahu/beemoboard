@@ -108,18 +108,25 @@ class Thread extends Beemo
 		return $this->thread->numRows();
 	}
 	
+	/* Puts an array of all of the posts in the currently selected thread into
+	$aPostData. */
 	public function getAllPosts(&$aPostData)
 	{
+		//TODO: Return posts already indexed like $thread_post['nick'] and such
+	
 		$this->thread->getTable($aPostData, 1);
 		$numPosts =  $this->thread->numRows();
 		return $numPosts;
 	}
 	
+	/* Puts an array of the post data from $num post into $aPostData. */
 	public function getPost(&$aPostData, $num)
 	{
 		$this->thread->getRow($aPostData, $num);
 	}
 	
+	/* Puts an array of the post data from the most recent posts into 
+	$aPostData, the number of which is determined by $howMany. */
 	public function getNewestPosts(&$aPostData, $howMany)
 	{
 		$numPosts = $this->thread->numRows();

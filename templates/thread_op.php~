@@ -7,7 +7,7 @@
 	[Posted: <? echo $thread_post['time']; ?>]
 	</div>
 	<div class="content">
-	<? if ($thread_post['image'] != 0)
+	<? if ($thread_post['image'] != "")
 	{
 	?>
 	<a href="<? echo $thread_post['image'] ?>">

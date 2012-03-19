@@ -67,6 +67,8 @@ class Beemo
 		}
 	}
 	
+	/* Will return the value of the current configuration that corresponds to 
+	the $key you pass. */
 	public function getConfig($key)
 	{
 		if (true == array_key_exists($key, $this->config))
