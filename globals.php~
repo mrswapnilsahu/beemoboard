@@ -28,6 +28,6 @@ define("MAX_UPLOAD_SIZE", 1024);
 define("KILO", 1000);
 
 //page names
-define("E404_PAGE", "404.php");
+define("404_PAGE", "404.php");
 
 ?>

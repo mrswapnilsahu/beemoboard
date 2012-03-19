@@ -16,6 +16,8 @@ class Beemo
 							'MAX_THREAD_LIFETIME' => 10080, //in minutes 
 							'MAX_UPLOAD_SIZE' => 512, //in KB
 							); 
+							
+	private $threadDir = "threads/"; //FIXME: do this the "proper" way
 	
 	/* Constructor, will load a non-default config if path is supplied. */
 	public function __construct($configFile = 0)
@@ -154,7 +156,7 @@ class Beemo
 							return 1; //image is valid!
 						}
 						else
-							$sErrorString = "File too large! Max file size ".MAX_UPLOAD_SIZE." KB.";
+							$sErrorString = "File too large! Max file size ".$config['MAX_UPLOAD_SIZE']." KB.";
 					}
 					else
 						$sErrorString = "Invalid image!";
