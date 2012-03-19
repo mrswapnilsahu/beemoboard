@@ -10,7 +10,9 @@ class Beemo
 	private $sError = "";
 	private $configFile = 0;
 	private $configdb = 0;
-	private $config = array('MAX_POSTS' => 250,
+	private $config = array('BOARD_TITLE' => "Beemoboard",
+							'MAX_POSTS' => 250,
+							'MAX_THREADS' => 250,
 							'MAX_THREAD_LIFETIME' => 10080, //in minutes 
 							'MAX_UPLOAD_SIZE' => 512, //in KB
 							); 
@@ -52,7 +54,7 @@ class Beemo
 				{
 					$configData = 0;
 					$this->configdb->getRow($configData, $configRow);
-					$config[$key] = $configData[1];
+					$this->config[$key] = $configData[1];
 					//echo $config[$key]."<br/>";
 				}
 			}
@@ -63,6 +65,14 @@ class Beemo
 			$this->setError("Couldn't load config file: $configFile!");
 			return 0;
 		}
+	}
+	
+	public function getConfig($key)
+	{
+		if (true == array_key_exists($key, $this->config))
+			return $this->config[$key];
+		else
+			return false; //is false really any different from 0?
 	}
 	
 	/* Returns the number of the threads that have been created in the past
@@ -164,6 +174,18 @@ class Beemo
 	public function pruneThreads()
 	{
 	
+	}
+	
+	/* This will return an array of thread ID's from most recently updated to
+	least recently. */
+	public function getActiveThreads()
+	{
+	
+	}
+	
+	public function displayPostForm($postURL, $mode = 0)
+	{
+		//not sure how I want to approach this one yet.
 	}
 
 }

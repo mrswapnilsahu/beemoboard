@@ -1,5 +1,7 @@
 <?php
 
+$pageName = "Beemoboard";
+
 include 'globals.php';
 include 'templates/meta.php';
 include 'templates/navigation.php';
