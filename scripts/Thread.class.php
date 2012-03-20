@@ -86,6 +86,12 @@ class Thread extends Beemo
 			return 0;
 	}
 	
+	/* Same as above, but takes input as an indexed array. */
+	public function addPostArray($aPost)
+	{
+	
+	}
+	
 	/* Delete post $num from the thread. */
 	public function deletePost($num)
 	{

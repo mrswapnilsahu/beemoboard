@@ -11,7 +11,11 @@ class Beemo
 	private $configFile = 0;
 	private $configdb = 0;
 	private $config = array('BOARD_TITLE' => "Beemoboard",
-							'MAX_POSTS' => 250,
+							'MAX_NICK_LENGTH' => 128,
+							'MAX_SUBJECT_LENGTH' => 128,
+							'MAX_CONTENT_LENGTH' => 2048,
+							'REQUIRE_SUBJECT' => 0,
+							'MAX_THREAD_POSTS' => 250,
 							'MAX_THREADS' => 250,
 							'MAX_THREAD_LIFETIME' => 10080, //in minutes 
 							'MAX_UPLOAD_SIZE' => 512, //in KB
@@ -156,7 +160,7 @@ class Beemo
 							return 1; //image is valid!
 						}
 						else
-							$sErrorString = "File too large! Max file size ".MAX_UPLOAD_SIZE." KB.";
+							$sErrorString = "File too large! Max file size ".$config['MAX_UPLOAD_SIZE']." KB.";
 					}
 					else
 						$sErrorString = "Invalid image!";
@@ -171,6 +175,57 @@ class Beemo
 			$sErrorString = "No file selected!";
 		
 		return 0; //image not valid!
+	}
+	
+	/* Validates text input that might be used for subject/nick/message etc.
+	Returns the original string if valid, 0 if not. */
+	public function validateTextInput($input, $maxLength, $multiLine)
+	{
+		if ($multiLine == 0)
+		{
+			if(preg_match("/^[A-Za-z0-9]{1,$maxLength}$/", $input))
+				return $input;
+			else
+				return 0;
+		}
+		else if ($multiLine == 1)
+		{
+			if(preg_match("/^[A-Za-z0-9.]{1,$maxLength}$/", $input))
+				return $input;
+			else
+				return 0;
+		}
+	}
+	
+	public function sanitizeString($string, $maxLength)
+	{
+		return filter_var(substr($string, 1, $maxLength), FILTER_SANITIZE_STRING);
+	}
+	
+	/* Validates subject, nick, content fields of the post_form. Returns 0 if
+	all passed, number of problems if not. Warnings are passed into $aWarnings. */
+	public function validatePostForm(&$aWarnings, $aPostInput)
+	{
+		$fail = 0;
+		if (strlen($aPostInput['nick']) > $this->getConfig('MAX_NICK_LENGTH'))
+		{
+			$aWarnings['nick'] = "Max nick length is ".$this->getConfig('MAX_NICK_LENGTH');
+			$fail++;
+		}
+		
+		if (strlen($aPostInput['subject']) > $this->getConfig('MAX_SUBJECT_LENGTH'))
+		{
+			$aWarnings['subject'] = "Max subject length is ".$this->getConfig('MAX_SUBJECT_LENGTH');
+			$fail++;
+		}
+		
+		if (strlen($aPostInput['subject']) > $this->getConfig('MAX_SUBJECT_LENGTH'))
+		{
+			$aWarnings['subject'] = "Max subject length is ".$this->getConfig('MAX_SUBJECT_LENGTH');
+			$fail++;
+		}
+		
+		return $fail;
 	}
 	
 	/* This will search for and delete threads that are past the maximum life

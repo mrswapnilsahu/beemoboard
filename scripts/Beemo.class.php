@@ -11,7 +11,11 @@ class Beemo
 	private $configFile = 0;
 	private $configdb = 0;
 	private $config = array('BOARD_TITLE' => "Beemoboard",
-							'MAX_POSTS' => 250,
+							'MAX_NICK_LENGTH' => 128,
+							'MAX_SUBJECT_LENGTH' => 128,
+							'MAX_CONTENT_LENGTH' => 2048,
+							'REQUIRE_SUBJECT' => 0,
+							'MAX_THREAD_POSTS' => 250,
 							'MAX_THREADS' => 250,
 							'MAX_THREAD_LIFETIME' => 10080, //in minutes 
 							'MAX_UPLOAD_SIZE' => 512, //in KB
@@ -115,7 +119,13 @@ class Beemo
 		if (1 == validateImageUpload($aFile, $sErrorString))
 		{
 			//copy code goes here
-			
+			if (false == copy($aFile['tmp_name'], $sDest))
+			{
+				$this->setError("Couldn't upload image!");
+				return 0;
+			}
+			else
+				return $sDest;
 		}	
 		else
 		{
@@ -195,7 +205,44 @@ class Beemo
 	
 	public function sanitizeString($string, $maxLength)
 	{
-		return filter_var(substr($string, 1, $maxLength), FILTER_SANITIZE_STRING);
+		return filter_var(substr($string, 0, $maxLength), FILTER_SANITIZE_STRING);
+	}
+	
+	/* Validates subject, nick, content fields of the post_form. Returns 0 if
+	all passed, number of problems if not. Warnings are passed into $aWarnings. */
+	public function validatePostForm(&$aWarnings, $aPostInput)
+	{
+		$aWarnings = array("subject" => "",
+					"image" => "",
+					"validation" => "",
+					"content" => "",
+					"nick" => "");
+	
+		$fail = 0;
+		if (strlen($aPostInput['nick']) > $this->getConfig('MAX_NICK_LENGTH'))
+		{
+			$aWarnings['nick'] = "Max nick length is ".$this->getConfig('MAX_NICK_LENGTH');
+			$fail++;
+		}
+		
+		if (strlen($aPostInput['subject']) > $this->getConfig('MAX_SUBJECT_LENGTH'))
+		{
+			$aWarnings['subject'] = "Max subject length is ".$this->getConfig('MAX_SUBJECT_LENGTH');
+			$fail++;
+		}
+		
+		if (strlen($aPostInput['content']) > $this->getConfig('MAX_CONTENT_LENGTH'))
+		{
+			$aWarnings['content'] = "Max content length is ".$this->getConfig('MAX_CONTENT_LENGTH');
+			$fail++;
+		}
+		else if ($aPostInput['content'] == "")
+		{
+			$aWarnings['content'] = "Content is empty!";
+			$fail++;
+		}
+		
+		return $fail;
 	}
 	
 	/* This will search for and delete threads that are past the maximum life
