@@ -4,7 +4,7 @@
 	</div>
 	<div class="nick">
 	<? echo $thread_post['nick'] ?>
-	[Posted: <? echo $thread_post['time']; ?>]
+	[Posted: <? echo date("F j, Y (H:i:s)", $thread_post['time']) ?>]
 	</div>
 	<div class="content">
 	<? if ($thread_post['image'] != 0)

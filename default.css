@@ -102,9 +102,11 @@ a:hover, a:active
 	background: #1ae9fc;
 	margin-bottom: 4px;
 	/*margin-left: 8px;*/
-	padding: 2px;
+	padding: 0px;
 	overflow: auto;
 	display: inline-block;
+	border-right: 1px solid #acccef;
+	border-bottom: 1px solid #acccef;
 }
 
 .post .subject {
@@ -114,8 +116,9 @@ a:hover, a:active
 
 .post .nick {
 	min-height: 16px;
-	background: #6cdfce;
+	background: #6ccfce;
 	padding: 1px;
+	padding-left: 4px;
 }
 
 .post .content {

@@ -116,13 +116,19 @@ class Thread extends Beemo
 	
 		$this->thread->getTable($aPostData, 1);
 		$numPosts =  $this->thread->numRows();
+		
+		//index the posts
+		for ($i = 1; $i <= $numPosts; $i++)
+			$this->indexPostArray($aPostData[$i], $aPostData[$i]);
+		
 		return $numPosts;
 	}
 	
 	/* Puts an array of the post data from $num post into $aPostData. */
 	public function getPost(&$aPostData, $num)
-	{
+	{	
 		$this->thread->getRow($aPostData, $num);
+		$this->indexPostArray($aPostData, $aPostData);
 	}
 	
 	/* Puts an array of the post data from the most recent posts into 
@@ -136,7 +142,25 @@ class Thread extends Beemo
 			$startPost = 1;
 			
 		for ($i = $startPost; $i <= $numPosts; $i++)
-			 $this->thread->getRow($aPostData[], $i);
+			 $this->getPost($aPostData[], $i);
+			 
+	}
+	
+	private function indexPostArray(&$aOutArray, $inArray)
+	{
+		$postNum = 0;
+		$ip = 1; 
+		$nick = 2;
+		$image = 3;
+		$content = 4;
+		$time = 5;
+		
+		$aOutArray['num'] = $inArray[$postNum];
+		$aOutArray['ip'] = $inArray[$ip];
+		$aOutArray['nick'] = $inArray[$nick];
+		$aOutArray['image'] = $inArray[$image];
+		$aOutArray['content'] = $inArray[$content];
+		$aOutArray['time'] = $inArray[$time];
 	}
 	
 }

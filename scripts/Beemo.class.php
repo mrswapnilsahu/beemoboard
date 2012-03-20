@@ -173,6 +173,31 @@ class Beemo
 		return 0; //image not valid!
 	}
 	
+	/* Validates text input that might be used for subject/nick/message etc.
+	Returns the original string if valid, 0 if not. */
+	public function validateTextInput($input, $maxLength, $multiLine)
+	{
+		if ($multiLine == 0)
+		{
+			if(preg_match("/^[A-Za-z0-9]{1,$maxLength}$/", $input))
+				return $input;
+			else
+				return 0;
+		}
+		else if ($multiLine == 1)
+		{
+			if(preg_match("/^[A-Za-z0-9.]{1,$maxLength}$/", $input))
+				return $input;
+			else
+				return 0;
+		}
+	}
+	
+	public function sanitizeString($string, $maxLength)
+	{
+		return filter_var(substr($string, 1, $maxLength), FILTER_SANITIZE_STRING);
+	}
+	
 	/* This will search for and delete threads that are past the maximum life
 	span. */
 	public function pruneThreads()
