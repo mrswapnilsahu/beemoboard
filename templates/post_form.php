@@ -22,12 +22,18 @@ if (false == isset($_POST['Post']))
 <div id="post_form">
 <FORM ACTION="<?php echo $postURL ?>" METHOD=POST enctype="multipart/form-data">
 
-<? /*some code to decide if we're viewing a thread or the thread index, if we're
-	viewing a thread, don't show the "subject" line */?>
+<? 
+if (false == isset($formStyle))
+	$formStyle = "THREAD";
+if ($formStyle != "POST")
+{
+?>
 Subject: <?php echo $warning['subject']; ?><br/>
 <INPUT TYPE=TEXT SIZE=40 NAME="subject" class="text_input"
 	VALUE="<?php echo $_POST['subject'];?>"><br/>
-<? //and close the conditional mentioned above ?>
+<?
+}
+?>
 
 Nickname: <?php echo $warning['nick']; ?><br/>
 <INPUT TYPE=TEXT SIZE=40 NAME="nick" class="text_input"
@@ -39,7 +45,7 @@ Content: <?php echo $warning['content'];?><br/>
 </TEXTAREA><br/>
 
 
-<INPUT TYPE="file" NAME="image" size="30">
+<INPUT TYPE="file" NAME="image" size="">
 <?php echo $warning['image'];?><br/>
 
 Verification goes here. <br/>

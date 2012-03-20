@@ -20,6 +20,7 @@ if ($thread->selectThread($threadID))
 	/*Here begins code that will take form input and post it. */
 	if (isset($_POST['Post']))
 	{
+		$errs = 0;
 		if (0 == $bmo->validatePostForm($warning, $_POST))
 		{
 			$postInput['nick'] = $bmo->sanitizeString($_POST['nick'], $bmo->getConfig('MAX_NICK_LENGTH'));
@@ -27,9 +28,24 @@ if ($thread->selectThread($threadID))
 			if ($postInput['nick'] == "")
 				$postInput['nick'] = "Anonymous";
 			
-			$thread->addPost($_SERVER['REMOTE_ADDR'], $postInput['nick'], 0, $postInput['content']);
+			if (isset($_FILES['image']))
+			{
+				if (0 != $bmo->uploadImage($_FILES['image'], IMAGES_PATH.$_FILES['image']['name']))
+				{
+				
+				}
+				else
+				{
+					$warning['image'] = $bmo->getError();
+					$errs++;
+				}
+			}
 			
-			echo "validated!";
+			if ($errs == 0)
+				$thread->addPost($_SERVER['REMOTE_ADDR'], $postInput['nick'], 0, $postInput['content']);
+			else
+				die($errs;)
+			
 		}
 	}
 	/*End posting code. */
@@ -48,6 +64,7 @@ include TEMPLATES_PATH.'header.php';
 
 /* Body here (posts, input form, etc.) */
 $postURL = $_SERVER['PHP_SELF'];
+$formStyle = "THREAD";
 include TEMPLATES_PATH.'post_form.php';
 
 ?>

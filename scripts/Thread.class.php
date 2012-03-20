@@ -31,7 +31,7 @@ class Thread extends Beemo
 		$this->errorString = $errorString;
 	}
 	
-	private function getError()
+	public function getError()
 	{
 		return $this->errorString;
 	}

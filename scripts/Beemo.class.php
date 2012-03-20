@@ -11,7 +11,7 @@ class Beemo
 	private $configFile = 0;
 	private $configdb = 0;
 	private $config = array('BOARD_TITLE' => "Beemoboard",
-							'MAX_NICK_LENGTH' => 128,
+							'MAX_NICK_LENGTH' => 32,
 							'MAX_SUBJECT_LENGTH' => 128,
 							'MAX_CONTENT_LENGTH' => 2048,
 							'REQUIRE_SUBJECT' => 0,
@@ -38,12 +38,12 @@ class Beemo
 	
 	private function setError($errorString)
 	{
-		$this->errorString = $errorString;
+		$this->sError = $errorString;
 	}
 	
-	private function getError()
+	public function getError()
 	{
-		return $this->errorString;
+		return $this->sError;
 	}
 	
 	/* Will load a CSV config file to change the default board settings. */
@@ -116,7 +116,7 @@ class Beemo
 	public function uploadImage($aFile, $sDest)
 	{
 		$sErrorString = "";
-		if (1 == validateImageUpload($aFile, $sErrorString))
+		if (1 == $this->validateImageUpload($aFile, $sErrorString))
 		{
 			//copy code goes here
 			if (false == copy($aFile['tmp_name'], $sDest))
@@ -160,13 +160,13 @@ class Beemo
 					$imageX = imagesx($imgResource);
 					if ($imageX != false)
 					{
-						if ($aFile['size'] <= ($config['MAX_UPLOAD_SIZE']))
+						if ($aFile['size'] <= ($this->config['MAX_UPLOAD_SIZE']) * 1024) //times 1024 == KB
 						{
 							$sErrorString = "";
 							return 1; //image is valid!
 						}
 						else
-							$sErrorString = "File too large! Max file size ".$config['MAX_UPLOAD_SIZE']." KB.";
+							$sErrorString = "File too large! Max file size ".$this->config['MAX_UPLOAD_SIZE']." KB.";
 					}
 					else
 						$sErrorString = "Invalid image!";
@@ -225,11 +225,12 @@ class Beemo
 			$fail++;
 		}
 		
-		if (strlen($aPostInput['subject']) > $this->getConfig('MAX_SUBJECT_LENGTH'))
+		//FIXME: don't need to validate subject if it doesn't exist.
+		/*if (strlen($aPostInput['subject']) > $this->getConfig('MAX_SUBJECT_LENGTH'))
 		{
 			$aWarnings['subject'] = "Max subject length is ".$this->getConfig('MAX_SUBJECT_LENGTH');
 			$fail++;
-		}
+		}*/
 		
 		if (strlen($aPostInput['content']) > $this->getConfig('MAX_CONTENT_LENGTH'))
 		{
