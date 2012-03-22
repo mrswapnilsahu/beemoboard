@@ -21,13 +21,13 @@ li {list-style: none; margin: 0; padding-left: 0px;}
 
 a:link, a:visited
 {
-	color: #8811FF;
+	color: #6ccfce;
 	text-decoration: none;
 }
 
 a:hover, a:active
 {
-	color: #8811FF;
+	color: #6ccfce;
 	text-decoration: underline;
 }
 

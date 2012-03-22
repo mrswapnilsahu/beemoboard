@@ -7,8 +7,8 @@
 	<? if ($thread_post['image'] != "0")
 	{
 	?>
-	<a href="<? echo $thread_post['image'] ?>">
-	<img width="160" height="200" align="left" src="<? echo $thread_post['image_thumb'] ?>">
+	<a href="<? echo IMAGES_RELATIVE_PATH.$thread_post['image'] ?>">
+	<img width="160" height="200" align="left" src="<? echo THUMBS_RELATIVE_PATH.$thread_post['image'] ?>">
 	</a>
 	<?
 	}

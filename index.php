@@ -32,7 +32,7 @@ if ($thread->selectThread($threadID))
 			{
 				if (0 != $bmo->uploadImage($_FILES['image'], IMAGES_PATH.$_FILES['image']['name']))
 				{
-				
+					
 				}
 				else
 				{
@@ -43,8 +43,6 @@ if ($thread->selectThread($threadID))
 			
 			if ($errs == 0)
 				$thread->addPost($_SERVER['REMOTE_ADDR'], $postInput['nick'], 0, $postInput['content']);
-			else
-				die($errs;)
 			
 		}
 	}

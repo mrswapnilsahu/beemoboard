@@ -4,6 +4,7 @@ include 'globals.php';
 require_once SCRIPTS_PATH."Beemo.class.php";
 require_once SCRIPTS_PATH."Thread.class.php";
 require_once SCRIPTS_PATH."Timer.class.php";
+require_once SCRIPTS_PATH."Thumbnailer.class.php";
 require_once SCRIPTS_PATH."functions.php";
 $timer = new Timer(1);
 
@@ -46,7 +47,12 @@ if (isset($_POST['Post']))
 				$errs++;
 			}
 			else
-				$postInput['image'] = IMAGES_RELATIVE_PATH.$_FILES['image']['name'];
+			{
+				$postInput['image'] = $_FILES['image']['name'];
+				$thm = new Thumbnailer();
+				$thm->setThumbParams(1, 160);
+				$thm->makeThumb(IMAGES_RELATIVE_PATH.$postInput['image'], THUMBS_RELATIVE_PATH.$postInput['image']);
+			}
 		}
 		else
 			$postInput['image'] = 0;
@@ -71,7 +77,8 @@ $postURL = $_SERVER['PHP_SELF']."?".$_SERVER['QUERY_STRING'];
 $formStyle = "POST"; //alt is "THREAD"
 include TEMPLATES_PATH.'post_form.php';
 
-echo "<center><h3>".$msg."</h3></center>";
+if (isset($msg))
+	echo "<center><h3>".$msg."</h3></center>";
 
 ?>
 <div id="post_container">
