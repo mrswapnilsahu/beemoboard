@@ -1,8 +1,16 @@
 <div class="post">
 	<div class="subject">
-	<? echo $thread_post['subject'] ?> <a class="aright" href="nowhere">Reply</a>
+	<? echo $thread_post['subject'] ?> 
+	<? if ($formStyle == "THREAD")
+	{
+	?>
+	<a class="aright" href="nowhere">Reply</a>
+	<?
+	}
+	?>
 	</div>
 	<div class="nick">
+	<? echo $thread_post['num']."." ?>
 	<? echo $thread_post['nick'] ?>
 	[Posted: <? echo date("F j, Y (H:i:s)", $thread_post['time']) ?>]
 	</div>

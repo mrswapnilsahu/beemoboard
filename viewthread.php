@@ -50,7 +50,7 @@ if (isset($_POST['Post']))
 			{
 				$postInput['image'] = $_FILES['image']['name'];
 				$thm = new Thumbnailer();
-				$thm->setThumbParams(1, 160);
+				$thm->setThumbParams(2, 160);
 				$thm->makeThumb(IMAGES_RELATIVE_PATH.$postInput['image'], THUMBS_RELATIVE_PATH.$postInput['image']);
 			}
 		}
@@ -85,10 +85,21 @@ if (isset($msg))
 <?php
 
 $numPosts = $thread->getAllPosts($aPosts);
-for ($i = 1; $i <= $numPosts; $i++)
-{							
-	$thread_post = $aPosts[$i];
-	include TEMPLATES_PATH.'thread_post.php';
+for ($i = 0; $i <= $numPosts; $i++)
+{				
+	if ($i == 0)
+	{
+		/* I feel like this is a messy way to handle the "subject", but it works
+		for now. */
+		$thread_post = $aPosts[++$i];
+		$thread_post['subject'] = $aPosts[0][0];
+		include TEMPLATES_PATH."thread_op.php";
+	}
+	else
+	{	
+		$thread_post = $aPosts[$i];
+		include TEMPLATES_PATH.'thread_post.php';
+	}
 }
 
 ?>

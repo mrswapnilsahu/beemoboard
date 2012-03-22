@@ -1,5 +1,6 @@
 <div class="post">
 	<div class="nick">
+	<? echo $thread_post['num']."." ?>
 	<? echo $thread_post['nick'] ?>
 	[Posted: <? echo date("F j, Y (H:i:s)", $thread_post['time']) ?>]
 	</div>
@@ -8,7 +9,7 @@
 	{
 	?>
 	<a href="<? echo IMAGES_RELATIVE_PATH.$thread_post['image'] ?>">
-	<img width="160" height="200" align="left" src="<? echo THUMBS_RELATIVE_PATH.$thread_post['image'] ?>">
+	<img align="left" src="<? echo THUMBS_RELATIVE_PATH.$thread_post['image'] ?>">
 	</a>
 	<?
 	}

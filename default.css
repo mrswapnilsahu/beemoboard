@@ -99,7 +99,7 @@ a:hover, a:active
 .post {
 	min-width: 250px;
 	min-height: 40px;
-	background: #1ae9fc;
+	/*background: #1ae9fc;*/
 	margin-bottom: 4px;
 	/*margin-left: 8px;*/
 	padding: 0px;
@@ -109,9 +109,14 @@ a:hover, a:active
 	border-bottom: 1px solid #acccef;
 }
 
+.post a {
+	color: #FFFFFF;
+}
+
 .post .subject {
 	background: #4cbfce;
 	padding: 1px;
+	padding-left: 4px;
 }
 
 .post .nick {
@@ -124,9 +129,14 @@ a:hover, a:active
 .post .content {
 	min-height: 40px;
 	padding: 4px;
-	padding-right: 12px;
+	/*padding-right: 4px;*/
 	background: #deffef;
 	overflow: auto;
+}
+
+.post img {
+	border: 1px solid #6ccfce;
+	margin-right: 4px;
 }
 
 .clearer {
@@ -141,7 +151,7 @@ a:hover, a:active
 
 .aleft {
 	margin-right: 12px;
-	maring-left: 6px;
+	margin-left: 6px;
 	margin-top: 0px;
 	float: left;
 }
