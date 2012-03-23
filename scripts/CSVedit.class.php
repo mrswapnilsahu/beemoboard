@@ -187,6 +187,38 @@ class CSVedit
 		}
 	}
 	
+	/*Returns an array of arrays (rows) in specified range. */
+	public function getRowRange(&$aReturnData, $iStartRow, $iEndRow)
+	{
+		if ($this->acquireLock())
+		{
+			$fp = fopen($this->sCSVfile, "r");
+		
+			$row = 0;
+			$index = 0;
+			while ($aTempData = fgetcsv($fp))
+			{			
+				if ($row >= $iStartRow && $row <= $iEndRow)
+				{
+					$aReturnData[$index] = $aTempData;
+					$index++;
+				}	
+				else if ($row > $iEndRow)
+					break;
+				$row++;
+			}
+		
+			fclose($fp);
+			
+			$this->releaseLock();
+		}
+		else
+		{
+			$this->setError("Couldn't acquire lock!");
+			return 0;
+		}
+	}
+	
 	/*Returns an array of arrays (rows) in specified range sorted "regularly"
 	in ascending order by the specified column.*/
 	public function getSortedRows(&$aReturnData, $iRowStart, $iRowEnd, $sortIndex)

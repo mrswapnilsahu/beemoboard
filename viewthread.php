@@ -10,6 +10,8 @@ $timer = new Timer(1);
 
 $bmo = new Beemo(DB_PATH."defaultconfig.csv");
 
+$bmo->getActiveThreads($aThreadList, THREADS_PATH);
+
 $thread = new Thread(THREADS_PATH);
 
 if (isset($_GET['id']))
@@ -31,8 +33,12 @@ else
 /*Here begins code that will take form input and post it. */
 if (isset($_POST['Post']))
 {	
+	/*TODO: maybe encapsulate all this in a function in beemo or thread to 
+		shrink wrap it all and make viewthread.php and posting pages in general
+		a little cleaner? */
+
 	$errs = 0;
-	if (0 == $bmo->validatePostForm($warning, $_POST))
+	if (0 == $bmo->validatePostForm($warning, $_POST, "POST"))
 	{
 		$postInput['nick'] = $bmo->sanitizeString($_POST['nick'], $bmo->getConfig('MAX_NICK_LENGTH'));
 		$postInput['content'] = $bmo->sanitizeString($_POST['content'], $bmo->getConfig('MAX_CONTENT_LENGTH'));
@@ -49,6 +55,7 @@ if (isset($_POST['Post']))
 			else
 			{
 				$postInput['image'] = $_FILES['image']['name'];
+				$postInput['image_size'] = $_FILES['image']['size'];
 				$thm = new Thumbnailer();
 				$thm->setThumbParams(2, 160);
 				$thm->makeThumb(IMAGES_RELATIVE_PATH.$postInput['image'], THUMBS_RELATIVE_PATH.$postInput['image']);
@@ -92,7 +99,8 @@ for ($i = 0; $i <= $numPosts; $i++)
 		/* I feel like this is a messy way to handle the "subject", but it works
 		for now. */
 		$thread_post = $aPosts[++$i];
-		$thread_post['subject'] = $aPosts[0][0];
+		$thread_post['subject'] = $aPosts[0][$thread::SUBJECT_COL];
+		$thread_post['threadid'] = $aPosts[0][$thread::THREADID_COL];
 		include TEMPLATES_PATH."thread_op.php";
 	}
 	else

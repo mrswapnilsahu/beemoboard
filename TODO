@@ -1,1 +1,7 @@
 Need a master list of error-strings (or strings used on the board in general) so that in the future this board could support other languages.
+
+Save image resolution in each post row so that it can be displayed with the image.
+
+Make validation work.
+
+Write text formatter so that newlines are <br/>' and really long lines get split.

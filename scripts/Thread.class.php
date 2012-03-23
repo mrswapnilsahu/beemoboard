@@ -16,6 +16,18 @@ class Thread extends Beemo
 	private $thread = 0; //currently selected CSV file/thread object
 	private $threadDir = "";
 	
+	const SUBJECT_COL = 0;
+	const THREADID_COL = 1;
+	const POSTNUM_COL = 0;
+	const IP_COL = 1;
+	const NICK_COL = 2;
+	const IMAGE_COL = 3;
+	const IMAGE_RESX_COL = 4;
+	const IMAGE_RESY_COL = 5;
+	const IMAGE_SIZE_COL = 6;
+	const CONTENT_COL = 7;
+	const TIME_COL = 8;
+	
 	public function __construct($threadDir, $selectThreadID = 0)
 	{
 		if ($selectThreadID != 0)
@@ -43,7 +55,8 @@ class Thread extends Beemo
 		$threadToSpawn = $this->curThreadID() + 1;
 		
 		$this->thread = new CSVedit($this->threadDir.$threadToSpawn, 1);
-		$threadData = array("subject" => $subject);
+		$threadData = array("subject" => $subject,
+							"threadid" => $threadToSpawn);
 		$this->thread->addRow($threadData);
 		
 		//touch($this->threadDir.$threadToSpawn);
@@ -67,11 +80,14 @@ class Thread extends Beemo
 		}		
 	}
 	
+	
+	/*IMMEDIATE TODO XXX FIXME: This needs updated to take account of the new 
+	order of data in the thread CSV files. Also complete addPostArray() below.
+	It will make your life easier. */
+	
 	/* Adds a new post to the end of the currently selected thread. */
 	public function addPost($ip, $nick, $image, $postContent, $time = 0)
 	{
-		/* TODO: this should validate $image and return an error if it's not 
-		valid. Use Beemo->uploadImage() which validates. Yay for inheritance! */
 	
 		if (true == is_object($this->thread))
 		{
@@ -153,20 +169,16 @@ class Thread extends Beemo
 	}
 	
 	private function indexPostArray(&$aOutArray, $inArray)
-	{
-		$postNum = 0;
-		$ip = 1; 
-		$nick = 2;
-		$image = 3;
-		$content = 4;
-		$time = 5;
-		
-		$aOutArray['num'] = $inArray[$postNum];
-		$aOutArray['ip'] = $inArray[$ip];
-		$aOutArray['nick'] = $inArray[$nick];
-		$aOutArray['image'] = $inArray[$image];
-		$aOutArray['content'] = $inArray[$content];
-		$aOutArray['time'] = $inArray[$time];
+	{	
+		$aOutArray['num'] = $inArray[$this::POSTNUM_COL];
+		$aOutArray['ip'] = $inArray[$this::IP_COL];
+		$aOutArray['nick'] = $inArray[$this::NICK_COL];
+		$aOutArray['image'] = $inArray[$this::IMAGE_COL];
+		$aOutArray['image_resx'] = $inArray[$this::IMAGE_RESX_COL];
+		$aOutArray['image_resy'] = $inArray[$this::IMAGE_RESY_COL];
+		$aOutArray['image_size'] = $inArray[$this::IMAGE_SIZE_COL];
+		$aOutArray['content'] = $inArray[$this::CONTENT_COL];
+		$aOutArray['time'] = $inArray[$this::TIME_COL];
 	}
 	
 }

@@ -1,6 +1,7 @@
 <div class="post">
 	<div class="subject">
 	<? echo $thread_post['subject'] ?> 
+	<? echo " [".$thread_post['threadid']."]" ?> 
 	<? if ($formStyle == "THREAD")
 	{
 	?>

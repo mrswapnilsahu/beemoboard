@@ -10,6 +10,15 @@ class Thumbnailer
 								"Fixed" => 250); //set up default thumbnail params
 								
 	/**
+	* @desc		Constructor with optional parameters to set up thumbnailing mode
+	* See setThumbParams() for parameter descriptions.
+	*/
+	public function __constructor($iMode = 0, $iParam = 25)
+	{
+		$this->setThumbParams($iMode, $iParam);
+	}
+								
+	/**
 	* @desc		Sets class error variable
 	* @param str $sError		error description
 	*/

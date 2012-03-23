@@ -19,6 +19,7 @@ class Beemo
 							'MAX_THREADS' => 250,
 							'MAX_THREAD_LIFETIME' => 10080, //in minutes 
 							'MAX_UPLOAD_SIZE' => 512, //in KB
+							'IMAGES_RELATIVE_PATH' => "image/"
 							); 
 							
 	private $threadDir = "threads/"; //FIXME: do this the "proper" way
@@ -108,6 +109,11 @@ class Beemo
 		}
 	
 		return $threadIndex;
+	}
+	
+	public function getImageProperties($sImageFile, &$iResx, &$iResy, &$iSizeKB)
+	{
+		
 	}
 	
 	/* Will take $aFile (passed in from $_FILS presumably, needs to be in this
@@ -210,7 +216,7 @@ class Beemo
 	
 	/* Validates subject, nick, content fields of the post_form. Returns 0 if
 	all passed, number of problems if not. Warnings are passed into $aWarnings. */
-	public function validatePostForm(&$aWarnings, $aPostInput)
+	public function validatePostForm(&$aWarnings, $aPostInput, $formStyle = "THREAD")
 	{
 		$aWarnings = array("subject" => "",
 					"image" => "",
@@ -225,12 +231,14 @@ class Beemo
 			$fail++;
 		}
 		
-		//FIXME: don't need to validate subject if it doesn't exist.
-		/*if (strlen($aPostInput['subject']) > $this->getConfig('MAX_SUBJECT_LENGTH'))
+		if ($formStyle === "THREAD")
 		{
-			$aWarnings['subject'] = "Max subject length is ".$this->getConfig('MAX_SUBJECT_LENGTH');
-			$fail++;
-		}*/
+			if (strlen($aPostInput['subject']) > $this->getConfig('MAX_SUBJECT_LENGTH'))
+			{
+				$aWarnings['subject'] = "Max subject length is ".$this->getConfig('MAX_SUBJECT_LENGTH');
+				$fail++;
+			}
+		}
 		
 		if (strlen($aPostInput['content']) > $this->getConfig('MAX_CONTENT_LENGTH'))
 		{
@@ -255,14 +263,34 @@ class Beemo
 	
 	/* This will return an array of thread ID's from most recently updated to
 	least recently. */
-	public function getActiveThreads()
+	public function getActiveThreads(&$aThreadList, $sThreadDir)
 	{
-	
+		if (true == is_dir($sThreadDir) && is_readable($sThreadDir))
+		{
+			$dh = opendir($sThreadDir);
+			while ($file = readdir($dh))
+			{
+				if ($file != "." && $file != ".." && $this->isint($file))
+				{
+					$aThreadList[$file] = filemtime($sThreadDir.$file);
+					echo $file.".".$aThreadList[$file]."<br/>";
+				}
+			}
+			
+			arsort($aThreadList, SORT_REGULAR);
+			print_r($aThreadList);
+			
+		}
 	}
 	
 	public function displayPostForm($postURL, $mode = 0)
 	{
 		//not sure how I want to approach this one yet.
+	}
+
+	private function isint($mixed)
+	{
+		return (preg_match( '/^\d*$/', $mixed) == 1);
 	}
 
 }
