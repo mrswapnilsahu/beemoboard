@@ -4,7 +4,7 @@ if (false == isset($warning))
 {
 	$warning = array("subject" => "",
 					"image" => "",
-					"validation" => "",
+					"verification" => "",
 					"content" => "",
 					"nick" => "");
 }
@@ -15,7 +15,8 @@ if (false == isset($_POST['Post']))
 					"image" => "",
 					"validation" => "",
 					"content" => "",
-					"nick" => "");
+					"nick" => "",
+					"verification" => "");
 }
 ?>
 
@@ -48,10 +49,10 @@ Content: <?php echo $warning['content'];?><br/>
 <INPUT TYPE="file" NAME="image" size="">
 <?php echo $warning['image'];?><br/>
 
-Verification goes here. <br/>
-<INPUT TYPE=TEXT SIZE=40 NAME="validation" class="text_input"
-	VALUE="<?php echo $_POST['validation'];?>"><br/>
-	<?php echo $warning['validation']; ?>
+Verification question: <? echo $post_form['verification'] ?> <br/>
+<?php echo $warning['verification'] ?>
+<INPUT TYPE=TEXT SIZE=40 NAME="verification" class="text_input"
+	VALUE="<?php echo $_POST['verification'];?>"><br/>
 
 <INPUT TYPE=SUBMIT NAME="Post" VALUE="Post" class="button"><br/>
 </FORM>

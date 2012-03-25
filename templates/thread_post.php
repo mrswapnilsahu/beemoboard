@@ -8,7 +8,7 @@
 	if ($thread_post['image'] != "0")
 	{
 		echo "<br/>";
-		echo "File: ".$thread_post['image_resx']."x".$thread_post['image_resx'].", ";
+		echo "File: ".$thread_post['image_resx']."x".$thread_post['image_resy'].", ";
 		echo $thread_post['image_size']." KB";
 	}
 	?>

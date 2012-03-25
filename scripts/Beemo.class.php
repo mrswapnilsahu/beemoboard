@@ -19,10 +19,10 @@ class Beemo
 							'MAX_THREADS' => 250,
 							'MAX_THREAD_LIFETIME' => 10080, //in minutes 
 							'MAX_UPLOAD_SIZE' => 512, //in KB
-							'IMAGES_RELATIVE_PATH' => "image/"
+							'IMAGES_RELATIVE_PATH' => "image/",
+							'THUMBS_RELATIVE_PATH' => "thumb/",
+							'THREADS_RELATIVE_PATH' => "threads/"
 							); 
-							
-	private $threadDir = "threads/"; //FIXME: do this the "proper" way
 	
 	/* Constructor, will load a non-default config if path is supplied. */
 	public function __construct($configFile = 0)
@@ -93,9 +93,9 @@ class Beemo
 		//Try both ways! - John Carmack
 		$threadIndex = 0;
 		
-		if (is_dir($this->threadDir))
+		if (is_dir($this->getConfig("THREADS_RELATIVE_PATH")))
 		{
-			if ($dh = opendir($this->threadDir))
+			if ($dh = opendir($this->getConfig("THREADS_RELATIVE_PATH")))
 			{
 				while (($file = readdir($dh)) != false)
 				{
@@ -284,7 +284,7 @@ class Beemo
 	{
 		$aWarnings = array("subject" => "",
 					"image" => "",
-					"validation" => "",
+					"verification" => "",
 					"content" => "",
 					"nick" => "");
 	

@@ -5,8 +5,10 @@ require_once SCRIPTS_PATH."Beemo.class.php";
 require_once SCRIPTS_PATH."Thread.class.php";
 require_once SCRIPTS_PATH."Timer.class.php";
 require_once SCRIPTS_PATH."Thumbnailer.class.php";
+require_once SCRIPTS_PATH."Querificator.class.php";
 require_once SCRIPTS_PATH."functions.php";
 $timer = new Timer(1);
+session_start();
 
 $bmo = new Beemo(DB_PATH."defaultconfig.csv");
 
@@ -27,58 +29,72 @@ if (isset($_GET['id']))
 }
 else
 	header("Location: ".E404_PAGE);
+	
+$warning = array("subject" => "",
+					"image" => "",
+					"verification" => "",
+					"content" => "",
+					"nick" => "");
 
 /*Here begins code that will take form input and post it. */
 if (isset($_POST['Post']))
 {	
 	/*TODO: maybe encapsulate all this in a function in beemo or thread to 
 		shrink wrap it all and make viewthread.php and posting pages in general
-		a little cleaner? */
+		a little cleaner? Verification is done before form validation here atm
+		so only if your question is right are any other warnings returned... */
 
 	$errs = 0;
-	if (0 == $bmo->validatePostForm($warning, $_POST, "POST"))
+	if ($_SESSION['verification_answer'] == $_POST['verification'])
 	{
-		$bmo->processValidatedPostForm($postInput, $_POST);
-	
-		/*$postInput['nick'] = $bmo->sanitizeString($_POST['nick'], $bmo->getConfig('MAX_NICK_LENGTH'));
-		$postInput['content'] = $bmo->sanitizeString($_POST['content'], $bmo->getConfig('MAX_CONTENT_LENGTH'));
-		if ($postInput['nick'] == "")
-			$postInput['nick'] = "Anonymous";*/
-		
-		if (!empty($_FILES['image']['name']))
+		if (0 == $bmo->validatePostForm($warning, $_POST, "POST"))
 		{
-			if (0 === $bmo->uploadImage($_FILES['image'], IMAGES_RELATIVE_PATH.$_FILES['image']['name']))
+			$bmo->processValidatedPostForm($postInput, $_POST);
+		
+			if (!empty($_FILES['image']['name']))
 			{
-				$warning['image'] = $bmo->getError();
-				$errs++;
+				if (0 === $bmo->uploadImage($_FILES['image'], IMAGES_RELATIVE_PATH.$_FILES['image']['name']))
+				{
+					$warning['image'] = $bmo->getError();
+					$errs++;
+				}
+				else
+				{
+					$postInput['image'] = $_FILES['image']['name'];
+				
+					$bmo->getPostedImageProperties($_FILES['image'], 
+													$postInput['image_resx'], 
+													$postInput['image_resy'],
+													$postInput['image_size']);				
+					$thm = new Thumbnailer();
+					$thm->setThumbParams(2, 160);
+					$thm->makeThumb(IMAGES_RELATIVE_PATH.$postInput['image'], THUMBS_RELATIVE_PATH.$postInput['image']);
+				}
 			}
 			else
+				$postInput['image'] = 0;
+		
+			if ($errs == 0)
 			{
-				$postInput['image'] = $_FILES['image']['name'];
-				
-				$bmo->getPostedImageProperties($_FILES['image'], 
-												$postInput['image_resx'], 
-												$postInput['image_resy'],
-												$postInput['image_size']);				
-				$thm = new Thumbnailer();
-				$thm->setThumbParams(2, 160);
-				$thm->makeThumb(IMAGES_RELATIVE_PATH.$postInput['image'], THUMBS_RELATIVE_PATH.$postInput['image']);
+				//$thread->addPost($_SERVER['REMOTE_ADDR'], $postInput['nick'], $postInput['image'], $postInput['content']);
+				$postInput['ip'] = $_SERVER['REMOTE_ADDR'];
+				$thread->addPostArray($postInput);
+				unset($_POST);
+				$msg = "Posted!";
 			}
 		}
-		else
-			$postInput['image'] = 0;
-		
-		if ($errs == 0)
-		{
-			//$thread->addPost($_SERVER['REMOTE_ADDR'], $postInput['nick'], $postInput['image'], $postInput['content']);
-			$postInput['ip'] = $_SERVER['REMOTE_ADDR'];
-			$thread->addPostArray($postInput);
-			unset($_POST);
-			$msg = "Posted!";
-		}
+	}
+	else
+	{
+		$errs++;
+		$warning['verification'] = "Sorry, your answer was incorrect!";
 	}
 }
 /*End posting code. */
+
+$queri = new Querificator();
+$_SESSION['verification_answer'] = $queri->generateQuestion($post_form['verification']);
+$_POST['verification'] = "";
 
 $pageName = $bmo->getConfig('BOARD_TITLE');
 include TEMPLATES_PATH.'meta.php';
