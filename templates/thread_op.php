@@ -14,6 +14,15 @@
 	<? echo $thread_post['num']."." ?>
 	<? echo $thread_post['nick'] ?>
 	[Posted: <? echo date("F j, Y (H:i:s)", $thread_post['time']) ?>]
+	
+	<? 
+	if ($thread_post['image'] != "0")
+	{
+		echo "<br/>";
+		echo "File: ".$thread_post['image_resx']."x".$thread_post['image_resx'].", ";
+		echo $thread_post['image_size']." KB";
+	}
+	?>
 	</div>
 	<div class="content">
 	<? if ($thread_post['image'] != "0")

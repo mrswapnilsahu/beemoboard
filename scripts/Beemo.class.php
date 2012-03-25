@@ -111,6 +111,28 @@ class Beemo
 		return $threadIndex;
 	}
 	
+	public function processValidatedPostForm(&$aOutData, $aInForm)
+	{
+		//TODO: getConfig bit could be optimized
+		$aOutData['nick'] = $this->sanitizeString($aInForm['nick'], $this->getConfig('MAX_NICK_LENGTH'));
+		if ($aInForm['nick'] == "")
+			$aOutData['nick'] = "Anonymous";
+			
+		$aOutData['content'] = $this->sanitizeString($aInForm['content'], $this->getConfig('MAX_CONTENT_LENGTH'));
+		$aOutData['content'] = $this->formatContentInput($aOutData['content']);
+			
+		/* TODO: insert a <br/> into the content string if there are no newlines
+		for x chars. */	
+			
+		return 1;
+	}
+	
+	private function formatContentInput($content)
+	{
+		$rv = str_replace("\n", "<br/>", $content);
+		return $rv;
+	}
+	
 	public function getPostedImageProperties($aImage, &$iResx, &$iResy, &$iSizeKB)
 	{
 		$extension = strtolower(pathinfo($aImage['name'], PATHINFO_EXTENSION));
@@ -130,7 +152,7 @@ class Beemo
 		
 		$iResx = imagesx($imgResource);
 		$iResy = imagesy($imgResource);
-		$iSizeKB = $aImage['size'] * 1000;
+		$iSizeKB = (float)$aImage['size'] / 1000;
 		return 1;
 			
 	}

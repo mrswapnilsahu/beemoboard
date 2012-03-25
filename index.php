@@ -28,7 +28,7 @@ include TEMPLATES_PATH.'post_form.php';
 <div id="post_container">
 <?php
 
-
+$bmo->getActiveThreads($aThreadList, THREADS_PATH);
 
 ?>
 </div>

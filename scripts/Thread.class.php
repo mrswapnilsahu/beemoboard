@@ -109,8 +109,6 @@ class Thread extends Beemo
 		$aPost['num'] = $this->thread->numRows() + 1;
 		
 		$this->indexPostArray($aFile, $aPost);
-		
-		print_r($aFile);
 			
 		$postNum = $this->thread->addRow($aFile);
 		return $postNum;

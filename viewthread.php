@@ -10,8 +10,6 @@ $timer = new Timer(1);
 
 $bmo = new Beemo(DB_PATH."defaultconfig.csv");
 
-$bmo->getActiveThreads($aThreadList, THREADS_PATH);
-
 $thread = new Thread(THREADS_PATH);
 
 if (isset($_GET['id']))
@@ -40,10 +38,12 @@ if (isset($_POST['Post']))
 	$errs = 0;
 	if (0 == $bmo->validatePostForm($warning, $_POST, "POST"))
 	{
-		$postInput['nick'] = $bmo->sanitizeString($_POST['nick'], $bmo->getConfig('MAX_NICK_LENGTH'));
+		$bmo->processValidatedPostForm($postInput, $_POST);
+	
+		/*$postInput['nick'] = $bmo->sanitizeString($_POST['nick'], $bmo->getConfig('MAX_NICK_LENGTH'));
 		$postInput['content'] = $bmo->sanitizeString($_POST['content'], $bmo->getConfig('MAX_CONTENT_LENGTH'));
 		if ($postInput['nick'] == "")
-			$postInput['nick'] = "Anonymous";
+			$postInput['nick'] = "Anonymous";*/
 		
 		if (!empty($_FILES['image']['name']))
 		{
