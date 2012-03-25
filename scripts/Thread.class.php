@@ -80,13 +80,9 @@ class Thread extends Beemo
 		}		
 	}
 	
-	
-	/*IMMEDIATE TODO XXX FIXME: This needs updated to take account of the new 
-	order of data in the thread CSV files. Also complete addPostArray() below.
-	It will make your life easier. */
-	
 	/* Adds a new post to the end of the currently selected thread. */
-	public function addPost($ip, $nick, $image, $postContent, $time = 0)
+	public function addPost($ip, $nick, $image, $image_resx, $image_resy, 
+							$image_size, $postContent, $time = 0)
 	{
 	
 		if (true == is_object($this->thread))
@@ -105,7 +101,19 @@ class Thread extends Beemo
 	/* Same as above, but takes input as an indexed array. */
 	public function addPostArray($aPost)
 	{
-	
+		if (!isset($aPost['time']) ||
+			 $aPost['time'] === "" || 
+			 $aPost['time'] == 0)
+			$aPost['time'] = time();	
+			
+		$aPost['num'] = $this->thread->numRows() + 1;
+		
+		$this->indexPostArray($aFile, $aPost);
+		
+		print_r($aFile);
+			
+		$postNum = $this->thread->addRow($aFile);
+		return $postNum;
 	}
 	
 	/* Delete post $num from the thread. */
@@ -141,7 +149,7 @@ class Thread extends Beemo
 		
 		//index the posts
 		for ($i = 1; $i <= $numPosts; $i++)
-			$this->indexPostArray($aPostData[$i], $aPostData[$i]);
+			$this->indexCSVArray($aPostData[$i], $aPostData[$i]);
 		
 		return $numPosts;
 	}
@@ -150,7 +158,7 @@ class Thread extends Beemo
 	public function getPost(&$aPostData, $num)
 	{	
 		$this->thread->getRow($aPostData, $num);
-		$this->indexPostArray($aPostData, $aPostData);
+		$this->indexCSVArray($aPostData, $aPostData);
 	}
 	
 	/* Puts an array of the post data from the most recent posts into 
@@ -164,11 +172,10 @@ class Thread extends Beemo
 			$startPost = 1;
 			
 		for ($i = $startPost; $i <= $numPosts; $i++)
-			 $this->getPost($aPostData[], $i);
-			 
+			 $this->getPost($aPostData[], $i);			 
 	}
 	
-	private function indexPostArray(&$aOutArray, $inArray)
+	private function indexCSVArray(&$aOutArray, $inArray)
 	{	
 		$aOutArray['num'] = $inArray[$this::POSTNUM_COL];
 		$aOutArray['ip'] = $inArray[$this::IP_COL];
@@ -179,6 +186,47 @@ class Thread extends Beemo
 		$aOutArray['image_size'] = $inArray[$this::IMAGE_SIZE_COL];
 		$aOutArray['content'] = $inArray[$this::CONTENT_COL];
 		$aOutArray['time'] = $inArray[$this::TIME_COL];
+	}
+	
+	private function indexPostArray(&$aOutArray, $aInArray)
+	{	
+		if (!isset($aInArray['num']))
+			$aInArray['num'] = 0;
+			
+		if (!isset($aInArray['ip']))
+			$aInArray['ip'] = 0;
+			
+		if (!isset($aInArray['nick']))
+			$aInArray['nick'] = 0;
+			
+		if (!isset($aInArray['image']))
+			$aInArray['image'] = 0;
+			
+		if (!isset($aInArray['image_resx']))
+			$aInArray['image_resx'] = 0;
+			
+		if (!isset($aInArray['image_resy']))
+			$aInArray['image_resy'] = 0;
+			
+		if (!isset($aInArray['image_size']))
+			$aInArray['image_size'] = 0;
+			
+		if (!isset($aInArray['content']))
+			$aInArray['content'] = 0;
+			
+		if (!isset($aInArray['time']))
+			$aInArray['time'] = 0;
+			
+		
+		$aOutArray[$this::POSTNUM_COL] = $aInArray['num'];
+		$aOutArray[$this::IP_COL] = $aInArray['ip'];
+		$aOutArray[$this::NICK_COL] = $aInArray['nick'];
+		$aOutArray[$this::IMAGE_COL] = $aInArray['image'];
+		$aOutArray[$this::IMAGE_RESX_COL] = $aInArray['image_resx'];
+		$aOutArray[$this::IMAGE_RESY_COL] = $aInArray['image_resy'];
+		$aOutArray[$this::IMAGE_SIZE_COL] = $aInArray['image_size'];
+		$aOutArray[$this::CONTENT_COL] = $aInArray['content'];
+		$aOutArray[$this::TIME_COL] = $aInArray['time'];
 	}
 	
 }

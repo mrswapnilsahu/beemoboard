@@ -111,9 +111,51 @@ class Beemo
 		return $threadIndex;
 	}
 	
+	public function getPostedImageProperties($aImage, &$iResx, &$iResy, &$iSizeKB)
+	{
+		$extension = strtolower(pathinfo($aImage['name'], PATHINFO_EXTENSION));
+
+		$imgResource = null;
+		if ($extension == "jpg" || $extension == "jpeg")
+			$imgResource = imagecreatefromjpeg($aImage['tmp_name']);
+		else if ($extension == "png")
+			$imgResource = imagecreatefrompng($aImage['tmp_name']);
+		else if ($extension == "gif")
+			$imgResource = imagecreatefromgif($aImage['tmp_name']);
+		else
+		{
+			$this->setError("Unknown extension!");
+			return 0;
+		}
+		
+		$iResx = imagesx($imgResource);
+		$iResy = imagesy($imgResource);
+		$iSizeKB = $aImage['size'] * 1000;
+		return 1;
+			
+	}
+	
 	public function getImageProperties($sImageFile, &$iResx, &$iResy, &$iSizeKB)
 	{
+		$extension = strtolower(pathinfo($sImageFile, PATHINFO_EXTENSION));
+
+		$imgResource = null;
+		if ($extension == "jpg" || $extension == "jpeg")
+			$imgResource = imagecreatefromjpeg($sImageFile);
+		else if ($extension == "png")
+			$imgResource = imagecreatefrompng($sImageFile);
+		else if ($extension == "gif")
+			$imgResource = imagecreatefromgif($sImageFile);
+		else
+		{
+			$this->setError("Unknown extension!");
+			return 0;
+		}
 		
+		$iResx = imagesx($imgResource);
+		$iResy = imagesy($imgResource);
+		$iSizeKB = $aImage['size'] * 1000;
+		return 1;		
 	}
 	
 	/* Will take $aFile (passed in from $_FILS presumably, needs to be in this

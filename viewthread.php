@@ -55,7 +55,11 @@ if (isset($_POST['Post']))
 			else
 			{
 				$postInput['image'] = $_FILES['image']['name'];
-				$postInput['image_size'] = $_FILES['image']['size'];
+				
+				$bmo->getPostedImageProperties($_FILES['image'], 
+												$postInput['image_resx'], 
+												$postInput['image_resy'],
+												$postInput['image_size']);				
 				$thm = new Thumbnailer();
 				$thm->setThumbParams(2, 160);
 				$thm->makeThumb(IMAGES_RELATIVE_PATH.$postInput['image'], THUMBS_RELATIVE_PATH.$postInput['image']);
@@ -66,7 +70,9 @@ if (isset($_POST['Post']))
 		
 		if ($errs == 0)
 		{
-			$thread->addPost($_SERVER['REMOTE_ADDR'], $postInput['nick'], $postInput['image'], $postInput['content']);
+			//$thread->addPost($_SERVER['REMOTE_ADDR'], $postInput['nick'], $postInput['image'], $postInput['content']);
+			$postInput['ip'] = $_SERVER['REMOTE_ADDR'];
+			$thread->addPostArray($postInput);
 			unset($_POST);
 			$msg = "Posted!";
 		}
