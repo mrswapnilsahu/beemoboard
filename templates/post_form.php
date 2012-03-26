@@ -1,4 +1,5 @@
-<? //this is to shut up the notices 
+<? 
+//this is to shut up the notices 
 //TODO: should be removed when everything is finished
 if (false == isset($warning))
 {

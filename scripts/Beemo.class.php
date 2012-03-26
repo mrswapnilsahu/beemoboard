@@ -202,7 +202,6 @@ class Beemo
 		$sErrorString = "";
 		if (1 == $this->validateImageUpload($aFile, $sErrorString))
 		{
-			//copy code goes here
 			if (false == copy($aFile['tmp_name'], $sDest))
 			{
 				$this->setError("Couldn't upload image!");
@@ -363,7 +362,8 @@ class Beemo
 					}
 					
 					//finally delete the thread.
-					unlink($file);
+					unlink($threadsPath.$file);
+					echo "Removed thread: ".$file."\n";
 				}
 			}
 		}
@@ -389,11 +389,6 @@ class Beemo
 			print_r($aThreadList);
 			
 		}
-	}
-	
-	public function displayPostForm($postURL, $mode = 0)
-	{
-		//not sure how I want to approach this one yet.
 	}
 
 	private function isint($mixed)

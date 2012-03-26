@@ -6,12 +6,11 @@ if (DEBUG == 1)
 {
 	ini_set('display_errors', 'On');
 	error_reporting(E_ALL);
-	//echo "DEBUG MODE ON<br/>";
 }
 
 //global strings
 define("SITE_NAME", "Beemoboard");
-define("VERSION_STRING", "Version 0.1 (Alpha), March 23, 2012");
+define("VERSION_STRING", "Version 0.1 (Alpha), March 26, 2012");
 define("BR", "<br/>");
 
 define("ROOT_PATH", dirname(__FILE__).'/');
