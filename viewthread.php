@@ -40,55 +40,64 @@ $warning = array("subject" => "",
 if (isset($_POST['Post']))
 {	
 	/*TODO: maybe encapsulate all this in a function in beemo or thread to 
-		shrink wrap it all and make viewthread.php and posting pages in general
-		a little cleaner? Verification is done before form validation here atm
-		so only if your question is right are any other warnings returned... */
+	shrink wrap it all and make viewthread.php and posting pages in general
+	a little cleaner? This could be broken down a lot and made to look nicer. */
 
 	$errs = 0;
-	if ($_SESSION['verification_answer'] == $_POST['verification'])
+	
+	if ($thread->numPosts() < $thread->getConfig('MAX_THREAD_POSTS'))
 	{
 		if (0 == $bmo->validatePostForm($warning, $_POST, "POST"))
 		{
-			$bmo->processValidatedPostForm($postInput, $_POST);
-		
-			if (!empty($_FILES['image']['name']))
+			if ($_SESSION['verification_answer'] == $_POST['verification'])
 			{
-				if (0 === $bmo->uploadImage($_FILES['image'], IMAGES_RELATIVE_PATH.$_FILES['image']['name']))
+				$bmo->processValidatedPostForm($postInput, $_POST);
+			
+				if (!empty($_FILES['image']['name']))
 				{
-					$warning['image'] = $bmo->getError();
-					$errs++;
+					if (0 === $bmo->uploadImage($_FILES['image'], IMAGES_RELATIVE_PATH.$_FILES['image']['name']))
+					{
+						$warning['image'] = $bmo->getError();
+						$errs++;
+					}
+					else
+					{
+						$postInput['image'] = $_FILES['image']['name'];
+			
+						$bmo->getPostedImageProperties($_FILES['image'], 
+														$postInput['image_resx'], 
+														$postInput['image_resy'],
+														$postInput['image_size']);				
+						$thm = new Thumbnailer();
+						$thm->setThumbParams(2, 160);
+						$thm->makeThumb(IMAGES_RELATIVE_PATH.$postInput['image'], THUMBS_RELATIVE_PATH.$postInput['image']);
+					}
 				}
 				else
-				{
-					$postInput['image'] = $_FILES['image']['name'];
-				
-					$bmo->getPostedImageProperties($_FILES['image'], 
-													$postInput['image_resx'], 
-													$postInput['image_resy'],
-													$postInput['image_size']);				
-					$thm = new Thumbnailer();
-					$thm->setThumbParams(2, 160);
-					$thm->makeThumb(IMAGES_RELATIVE_PATH.$postInput['image'], THUMBS_RELATIVE_PATH.$postInput['image']);
-				}
+					$postInput['image'] = 0;
 			}
 			else
-				$postInput['image'] = 0;
-		
-			if ($errs == 0)
 			{
-				//$thread->addPost($_SERVER['REMOTE_ADDR'], $postInput['nick'], $postInput['image'], $postInput['content']);
-				$postInput['ip'] = $_SERVER['REMOTE_ADDR'];
-				$thread->addPostArray($postInput);
-				unset($_POST);
-				$msg = "Posted!";
+				$errs++;
+				$warning['verification'] = "Sorry, your answer was incorrect!";
 			}
 		}
 	}
 	else
 	{
 		$errs++;
-		$warning['verification'] = "Sorry, your answer was incorrect!";
+		$msg = "Thread has reached it's maximum post limit!";
+	}		
+	
+	//if everything passed, put the post in the file.
+	if ($errs == 0)
+	{
+		$postInput['ip'] = $_SERVER['REMOTE_ADDR'];
+		$thread->addPostArray($postInput);
+		unset($_POST);
+		$msg = "Posted!";
 	}
+	
 }
 /*End posting code. */
 

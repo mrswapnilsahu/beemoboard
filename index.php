@@ -5,6 +5,7 @@ require_once SCRIPTS_PATH."Beemo.class.php";
 require_once SCRIPTS_PATH."Thread.class.php";
 require_once SCRIPTS_PATH."Timer.class.php";
 $timer = new Timer(1);
+session_start();
 
 $bmo = new Beemo(DB_PATH."defaultconfig.csv");
 

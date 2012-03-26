@@ -1,9 +1,10 @@
 <?php
 
-/* TODO: perhaps make a parent-class called "bmoBoard" that Thread will inherit
-from. This way we can have "over-arching" functions that aren't thread specific,
-but will be useful for maintaining the board as a whole.
-*/
+/* Thread class that extends the Beemo class. This class takes care of all the
+thread specific stuff for the board.
+March, 2012
+Brandon Foltz
+*/ 
 
 require_once('CSVedit.class.php');
 require_once('Beemo.class.php');
@@ -15,18 +16,6 @@ class Thread extends Beemo
 	private $selectedThreadID = 0;
 	private $thread = 0; //currently selected CSV file/thread object
 	private $threadDir = "";
-	
-	const SUBJECT_COL = 0;
-	const THREADID_COL = 1;
-	const POSTNUM_COL = 0;
-	const IP_COL = 1;
-	const NICK_COL = 2;
-	const IMAGE_COL = 3;
-	const IMAGE_RESX_COL = 4;
-	const IMAGE_RESY_COL = 5;
-	const IMAGE_SIZE_COL = 6;
-	const CONTENT_COL = 7;
-	const TIME_COL = 8;
 	
 	public function __construct($threadDir, $selectThreadID = 0)
 	{
@@ -58,8 +47,6 @@ class Thread extends Beemo
 		$threadData = array("subject" => $subject,
 							"threadid" => $threadToSpawn);
 		$this->thread->addRow($threadData);
-		
-		//touch($this->threadDir.$threadToSpawn);
 		
 		return $threadToSpawn;
 	}
@@ -140,8 +127,6 @@ class Thread extends Beemo
 	$aPostData. */
 	public function getAllPosts(&$aPostData)
 	{
-		//TODO: Return posts already indexed like $thread_post['nick'] and such
-	
 		$this->thread->getTable($aPostData, 1);
 		$numPosts =  $this->thread->numRows();
 		

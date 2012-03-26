@@ -1,7 +1,10 @@
 <?php
 
 /* This is the over-arching class with the most abstracted functions for running
-the image board. */
+the image board.
+March, 2012
+Brandon Foltz
+*/
 
 require_once('CSVedit.class.php');
 
@@ -17,12 +20,24 @@ class Beemo
 							'REQUIRE_SUBJECT' => 0,
 							'MAX_THREAD_POSTS' => 250,
 							'MAX_THREADS' => 250,
-							'MAX_THREAD_LIFETIME' => 10080, //in minutes 
+							'MAX_THREAD_IDLETIME' => 10080, //in minutes 
 							'MAX_UPLOAD_SIZE' => 512, //in KB
-							'IMAGES_RELATIVE_PATH' => "image/",
-							'THUMBS_RELATIVE_PATH' => "thumb/",
+							'IMAGES_RELATIVE_PATH' => "images/",
+							'THUMBS_RELATIVE_PATH' => "thumbs/",
 							'THREADS_RELATIVE_PATH' => "threads/"
 							); 
+							
+	const SUBJECT_COL = 0;
+	const THREADID_COL = 1;
+	const POSTNUM_COL = 0;
+	const IP_COL = 1;
+	const NICK_COL = 2;
+	const IMAGE_COL = 3;
+	const IMAGE_RESX_COL = 4;
+	const IMAGE_RESY_COL = 5;
+	const IMAGE_SIZE_COL = 6;
+	const CONTENT_COL = 7;
+	const TIME_COL = 8;
 	
 	/* Constructor, will load a non-default config if path is supplied. */
 	public function __construct($configFile = 0)
@@ -62,7 +77,6 @@ class Beemo
 					$configData = 0;
 					$this->configdb->getRow($configData, $configRow);
 					$this->config[$key] = $configData[1];
-					//echo $config[$key]."<br/>";
 				}
 			}
 			return 1;
@@ -318,11 +332,41 @@ class Beemo
 		return $fail;
 	}
 	
-	/* This will search for and delete threads that are past the maximum life
-	span. */
+	/* This will search for and delete threads that havent been posted in for 
+	MAX_THREAD_IDLETIME. It will also delete all the images + thumbs associated 
+	with that thread.
+	
+	This function is intended to be used from a maintainence script, not from
+	the actual board web-pages (not that it CANT be....). */
 	public function pruneThreads()
 	{
-	
+		$threadsPath = $this->getConfig("THREADS_RELATIVE_PATH");
+		$dh = opendir($threadsPath);
+		
+		while ($file = readdir($dh))
+		{
+			if ($file != ".." && $file != "." && $file != " " && $file != ".empty")
+			{
+				//if thread hasn't been posted in for x number of minutes...
+				if (filemtime($threadsPath.$file) < time() - (intval($this->getConfig('MAX_THREAD_IDLETIME') * 60)))
+				{
+					$th = new CSVedit($file, 0);
+					$th->getTable($threadData, 1);
+					$numRows = $th->numRows();
+					for ($i = 0; $i <= $numRows; $i++)
+					{
+						if ($threadData[$i][$this::IMAGE_COL] != "0")
+						{
+							unlink($this->getConfig('IMAGES_RELATIVE_PATH').$threadData[$i][$this::IMAGE_COL]);
+							unlink($this->getConfig('THUMBS_RELATIVE_PATH').$threadData[$i][$this::IMAGE_COL]);
+						}
+					}
+					
+					//finally delete the thread.
+					unlink($file);
+				}
+			}
+		}
 	}
 	
 	/* This will return an array of thread ID's from most recently updated to

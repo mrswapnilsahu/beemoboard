@@ -15,10 +15,10 @@ define("VERSION_STRING", "Version 0.1 (Alpha), March 23, 2012");
 define("BR", "<br/>");
 
 define("ROOT_PATH", dirname(__FILE__).'/');
-define("IMAGES_PATH", ROOT_PATH."image/");
-define("THUMBS_PATH", ROOT_PATH."thumb/");
-define("IMAGES_RELATIVE_PATH", "image/");
-define("THUMBS_RELATIVE_PATH", "thumb/");
+define("IMAGES_PATH", ROOT_PATH."images/");
+define("THUMBS_PATH", ROOT_PATH."thumbs/");
+define("IMAGES_RELATIVE_PATH", "images/");
+define("THUMBS_RELATIVE_PATH", "thumbs/");
 define("SCRIPTS_PATH", ROOT_PATH."scripts/");
 define("DB_PATH", ROOT_PATH."db/");
 define("THREADS_PATH", ROOT_PATH."threads/");
