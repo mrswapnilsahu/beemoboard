@@ -24,7 +24,8 @@ class Beemo
 							'MAX_UPLOAD_SIZE' => 512, //in KB
 							'IMAGES_RELATIVE_PATH' => "images/",
 							'THUMBS_RELATIVE_PATH' => "thumbs/",
-							'THREADS_RELATIVE_PATH' => "threads/"
+							'THREADS_RELATIVE_PATH' => "threads/",
+							'TEMPLATES_RELATIVE_PATH' => "templates/"
 							); 
 							
 	const SUBJECT_COL = 0;
@@ -393,6 +394,21 @@ class Beemo
 			arsort($aThreadList, SORT_REGULAR);
 			//print_r($aThreadList);
 		}
+	}
+	
+	/* Will return the number of threads that currently exist. */
+	public function numThreads()
+	{
+		$numThreads = 0;
+		$dh = opendir($this->getConfig('THREADS_RELATIVE_PATH'));
+		while ($file = readdir($dh))
+		{
+			if ($file != "." && $file != ".." && $this->isint($file))
+			{
+				$numThreads++;
+			}
+		}
+		return $numThreads;
 	}
 
 	private function isint($mixed)

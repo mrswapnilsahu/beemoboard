@@ -22,8 +22,8 @@ if (isset($_POST['Post']))
 	a little cleaner? This could be broken down a lot and made to look nicer. */
 
 	$errs = 0;
-	//if ($thread->numPosts() < $thread->getConfig('MAX_THREAD_POSTS'))
-	//{
+	if ($bmo->numThreads() < $bmo->getConfig('MAX_THREADS'))
+	{
 		if (0 == $bmo->validatePostForm($warning, $_POST, "THREAD"))
 		{
 			if ($_SESSION['verification_answer'] == $_POST['verification'])
@@ -59,12 +59,14 @@ if (isset($_POST['Post']))
 				$warning['verification'] = "Sorry, your answer was incorrect!";
 			}
 		}
-	//}
-	/*else
+	}
+	else
 	{
+		/* TODO: Rather than just telling the user that the thread limit is
+		reached, delete the oldest thread and spawn a new one. */
 		$errs++;
-		$msg = "Thread has reached it's maximum post limit!";
-	}*/		
+		$msg = "Maximum number of threads has been reached! Please wait for one to 404.";
+	}
 	
 	//if everything passed, put the post in the file.
 	if ($errs == 0)
@@ -97,9 +99,17 @@ include TEMPLATES_PATH.'post_form.php';
 
 ?>
 <div id="post_container">
+<pre>
 <?php
 
+/* Modify this method to re-index the returned thread list so that it can be 
+iterated through more easily as this section would prefer. */
 $bmo->getActiveThreads($aThreadList, THREADS_PATH);
+print_r($aThreadList);
+
+$thread->selectThread(1);
+$thread->getThreadPreview($pp);
+print_r($pp);
 
 ?>
 </div>

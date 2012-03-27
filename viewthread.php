@@ -121,6 +121,8 @@ if (isset($msg))
 <div id="post_container">
 <?php
 
+//TODO write a "render thread" function for the code below
+
 $numPosts = $thread->getAllPosts($aPosts);
 for ($i = 0; $i <= $numPosts; $i++)
 {				

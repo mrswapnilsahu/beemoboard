@@ -144,6 +144,22 @@ class Thread extends Beemo
 		$this->indexCSVArray($aPostData, $aPostData);
 	}
 	
+	/* Simply returns the OP and the newest 3 posts in a thread. */
+	public function getThreadPreview(&$aPostData)
+	{
+		$this->getAllPosts($aThreadPosts);
+		$aPostData[0] = $aThreadPosts[0];
+		$aPostData[1] = $aThreadPosts[1];
+		
+		$numPosts = count($aThreadPosts) - 1;
+		$inputIndex = 2;
+		$startAt = $numPosts - 2;
+		if ($startAt < 2)
+			$startAt = 2;
+		for ($i = $startAt; $i <= $numPosts; $i++)
+			$aPostData[$inputIndex++] = $aThreadPosts[$i];
+	}
+	
 	/* Puts an array of the post data from the most recent posts into 
 	$aPostData, the number of which is determined by $howMany. */
 	public function getNewestPosts(&$aPostData, $howMany)
