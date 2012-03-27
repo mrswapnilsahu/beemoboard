@@ -4,66 +4,102 @@ include 'globals.php';
 require_once SCRIPTS_PATH."Beemo.class.php";
 require_once SCRIPTS_PATH."Thread.class.php";
 require_once SCRIPTS_PATH."Timer.class.php";
+require_once SCRIPTS_PATH."Thumbnailer.class.php";
+require_once SCRIPTS_PATH."Querificator.class.php";
+require_once SCRIPTS_PATH."functions.php";
 $timer = new Timer(1);
+session_start();
 
 $bmo = new Beemo(DB_PATH."defaultconfig.csv");
-$pageName = $bmo->getConfig('BOARD_TITLE');
-
-$someText = "this is 348735897*(^&*(%&*( sine<h2> textqw\n\r\nr25! http://www.goo.com";
-$someText = $bmo->sanitizeString($someText, 256);
-echo $someText = str_replace("\n", "<br/>", $someText); 
-
-/*TODO: Probably going to need to write some bulky validation/sanitization/
-fixing function to avoid being hacked and replace newline chars etc. with
-html <br/>'s. */
 
 $thread = new Thread(THREADS_PATH);
 
-$threadID = 1;
-if ($thread->selectThread($threadID) == 0)
-	$thread->selectThread($thread->spawnThread("something"));
+/*Here begins code that will take form input and post it. */
+if (isset($_POST['Post']))
+{	
+	/*TODO: maybe encapsulate all this in a function in beemo or thread to 
+	shrink wrap it all and make viewthread.php and posting pages in general
+	a little cleaner? This could be broken down a lot and made to look nicer. */
 
-if ($thread->selectThread($threadID))
-{
-	$gotThread = 1;
+	$errs = 0;
+	//if ($thread->numPosts() < $thread->getConfig('MAX_THREAD_POSTS'))
+	//{
+		if (0 == $bmo->validatePostForm($warning, $_POST, "THREAD"))
+		{
+			if ($_SESSION['verification_answer'] == $_POST['verification'])
+			{
+				$bmo->processValidatedPostForm($postInput, $_POST, "THREAD");
+			
+				if (!empty($_FILES['image']['name']))
+				{
+					if (0 === $bmo->uploadImage($_FILES['image'], IMAGES_RELATIVE_PATH.$_FILES['image']['name']))
+					{
+						$warning['image'] = $bmo->getError();
+						$errs++;
+					}
+					else
+					{
+						$postInput['image'] = $_FILES['image']['name'];
+			
+						$bmo->getPostedImageProperties($_FILES['image'], 
+														$postInput['image_resx'], 
+														$postInput['image_resy'],
+														$postInput['image_size']);				
+						$thm = new Thumbnailer();
+						$thm->setThumbParams(2, 160);
+						$thm->makeThumb(IMAGES_RELATIVE_PATH.$postInput['image'], THUMBS_RELATIVE_PATH.$postInput['image']);
+					}
+				}
+				else
+					$postInput['image'] = 0;
+			}
+			else
+			{
+				$errs++;
+				$warning['verification'] = "Sorry, your answer was incorrect!";
+			}
+		}
+	//}
+	/*else
+	{
+		$errs++;
+		$msg = "Thread has reached it's maximum post limit!";
+	}*/		
+	
+	//if everything passed, put the post in the file.
+	if ($errs == 0)
+	{
+		$postInput['ip'] = $_SERVER['REMOTE_ADDR'];
+		$newThread = $thread->spawnThread($_POST['subject']);
+		$thread->selectThread($newThread);
+		$thread->addPostArray($postInput);
+		header("Location: viewthread.php?id=".$newThread);
+		unset($_POST);
+		$msg = "Posted!";
+	}
+	
 }
-else
-{
-	header("Location: ".E404_PAGE);
-}
+/*End posting code. */
 
+$queri = new Querificator();
+$_SESSION['verification_answer'] = $queri->generateQuestion($post_form['verification']);
+$_POST['verification'] = "";
+
+$pageName = $bmo->getConfig('BOARD_TITLE');
 include TEMPLATES_PATH.'meta.php';
 include TEMPLATES_PATH.'navigation.php';
 include TEMPLATES_PATH.'header.php';
 
 /* Body here (posts, input form, etc.) */
 $postURL = $_SERVER['PHP_SELF'];
+$formStyle = "THREAD";
 include TEMPLATES_PATH.'post_form.php';
 
 ?>
 <div id="post_container">
 <?php
 
-if ($gotThread)
-{
-	if ($thread->numPosts() < 5)
-		$thread->addPost($_SERVER['REMOTE_ADDR'], "jay", 0, "lolz");
-		
-	$numPosts = $thread->getAllPosts($aPosts);
-	for ($i = 1; $i <= $numPosts; $i++)
-	{
-		/*$thread_post = array('nick' => $aPosts[$i][2],
-							'time' => $aPosts[$i][5],
-							'content' => $aPosts[$i][4],
-							'image' => $aPosts[$i][3]);*/
-							
-		$thread_post = $aPosts[$i];
-		include TEMPLATES_PATH.'thread_post.php';
-	}
-}
-else
-	echo "Thread $threadID doesn't exist!";
-
+$bmo->getActiveThreads($aThreadList, THREADS_PATH);
 
 ?>
 </div>

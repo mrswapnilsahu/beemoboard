@@ -44,7 +44,7 @@ if (isset($_POST['Post']))
 	a little cleaner? This could be broken down a lot and made to look nicer. */
 
 	$errs = 0;
-	if ($thread->numPosts() < $thread->getConfig('MAX_THREAD_POSTS'))
+	//if ($thread->numPosts() < $thread->getConfig('MAX_THREAD_POSTS'))
 	{
 		if (0 == $bmo->validatePostForm($warning, $_POST, "POST"))
 		{

@@ -125,7 +125,7 @@ class Beemo
 		return $threadIndex;
 	}
 	
-	public function processValidatedPostForm(&$aOutData, $aInForm)
+	public function processValidatedPostForm(&$aOutData, $aInForm, $formStyle)
 	{
 		//TODO: getConfig bit could be optimized
 		$aOutData['nick'] = $this->sanitizeString($aInForm['nick'], $this->getConfig('MAX_NICK_LENGTH'));
@@ -134,6 +134,11 @@ class Beemo
 			
 		$aOutData['content'] = $this->sanitizeString($aInForm['content'], $this->getConfig('MAX_CONTENT_LENGTH'));
 		$aOutData['content'] = $this->formatContentInput($aOutData['content']);
+		
+		if ($formStyle == "THREAD")
+		{
+			$aOutData['subject'] = $this->sanitizeString($aInForm['subject'], $this->getConfig('MAX_SUBJECT_LENGTH'));
+		}	
 			
 		/* TODO: insert a <br/> into the content string if there are no newlines
 		for x chars. */	
@@ -381,13 +386,12 @@ class Beemo
 				if ($file != "." && $file != ".." && $this->isint($file))
 				{
 					$aThreadList[$file] = filemtime($sThreadDir.$file);
-					echo $file.".".$aThreadList[$file]."<br/>";
+					//echo $file.".".$aThreadList[$file]."<br/>";
 				}
 			}
 			
 			arsort($aThreadList, SORT_REGULAR);
-			print_r($aThreadList);
-			
+			//print_r($aThreadList);
 		}
 	}
 

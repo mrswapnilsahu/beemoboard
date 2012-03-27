@@ -1,7 +1,10 @@
 <?php
 
 /* This is the over-arching class with the most abstracted functions for running
-the image board. */
+the image board.
+March, 2012
+Brandon Foltz
+*/
 
 require_once('CSVedit.class.php');
 
@@ -11,17 +14,30 @@ class Beemo
 	private $configFile = 0;
 	private $configdb = 0;
 	private $config = array('BOARD_TITLE' => "Beemoboard",
-							'MAX_NICK_LENGTH' => 128,
+							'MAX_NICK_LENGTH' => 32,
 							'MAX_SUBJECT_LENGTH' => 128,
 							'MAX_CONTENT_LENGTH' => 2048,
 							'REQUIRE_SUBJECT' => 0,
 							'MAX_THREAD_POSTS' => 250,
 							'MAX_THREADS' => 250,
-							'MAX_THREAD_LIFETIME' => 10080, //in minutes 
+							'MAX_THREAD_IDLETIME' => 10080, //in minutes 
 							'MAX_UPLOAD_SIZE' => 512, //in KB
+							'IMAGES_RELATIVE_PATH' => "images/",
+							'THUMBS_RELATIVE_PATH' => "thumbs/",
+							'THREADS_RELATIVE_PATH' => "threads/"
 							); 
 							
-	private $threadDir = "threads/"; //FIXME: do this the "proper" way
+	const SUBJECT_COL = 0;
+	const THREADID_COL = 1;
+	const POSTNUM_COL = 0;
+	const IP_COL = 1;
+	const NICK_COL = 2;
+	const IMAGE_COL = 3;
+	const IMAGE_RESX_COL = 4;
+	const IMAGE_RESY_COL = 5;
+	const IMAGE_SIZE_COL = 6;
+	const CONTENT_COL = 7;
+	const TIME_COL = 8;
 	
 	/* Constructor, will load a non-default config if path is supplied. */
 	public function __construct($configFile = 0)
@@ -38,12 +54,12 @@ class Beemo
 	
 	private function setError($errorString)
 	{
-		$this->errorString = $errorString;
+		$this->sError = $errorString;
 	}
 	
-	private function getError()
+	public function getError()
 	{
-		return $this->errorString;
+		return $this->sError;
 	}
 	
 	/* Will load a CSV config file to change the default board settings. */
@@ -61,7 +77,6 @@ class Beemo
 					$configData = 0;
 					$this->configdb->getRow($configData, $configRow);
 					$this->config[$key] = $configData[1];
-					//echo $config[$key]."<br/>";
 				}
 			}
 			return 1;
@@ -92,9 +107,9 @@ class Beemo
 		//Try both ways! - John Carmack
 		$threadIndex = 0;
 		
-		if (is_dir($this->threadDir))
+		if (is_dir($this->getConfig("THREADS_RELATIVE_PATH")))
 		{
-			if ($dh = opendir($this->threadDir))
+			if ($dh = opendir($this->getConfig("THREADS_RELATIVE_PATH")))
 			{
 				while (($file = readdir($dh)) != false)
 				{
@@ -110,16 +125,95 @@ class Beemo
 		return $threadIndex;
 	}
 	
+	public function processValidatedPostForm(&$aOutData, $aInForm, $formStyle)
+	{
+		//TODO: getConfig bit could be optimized
+		$aOutData['nick'] = $this->sanitizeString($aInForm['nick'], $this->getConfig('MAX_NICK_LENGTH'));
+		if ($aInForm['nick'] == "")
+			$aOutData['nick'] = "Anonymous";
+			
+		$aOutData['content'] = $this->sanitizeString($aInForm['content'], $this->getConfig('MAX_CONTENT_LENGTH'));
+		$aOutData['content'] = $this->formatContentInput($aOutData['content']);
+		
+		if ($formStyle == "THREAD")
+		{
+			$aOutData['subject'] = $this->sanitizeString($aInForm['subject'], $this->getConfig('MAX_SUBJECT_LENGTH'));
+		}	
+			
+		/* TODO: insert a <br/> into the content string if there are no newlines
+		for x chars. */	
+			
+		return 1;
+	}
+	
+	private function formatContentInput($content)
+	{
+		$rv = str_replace("\n", "<br/>", $content);
+		return $rv;
+	}
+	
+	public function getPostedImageProperties($aImage, &$iResx, &$iResy, &$iSizeKB)
+	{
+		$extension = strtolower(pathinfo($aImage['name'], PATHINFO_EXTENSION));
+
+		$imgResource = null;
+		if ($extension == "jpg" || $extension == "jpeg")
+			$imgResource = imagecreatefromjpeg($aImage['tmp_name']);
+		else if ($extension == "png")
+			$imgResource = imagecreatefrompng($aImage['tmp_name']);
+		else if ($extension == "gif")
+			$imgResource = imagecreatefromgif($aImage['tmp_name']);
+		else
+		{
+			$this->setError("Unknown extension!");
+			return 0;
+		}
+		
+		$iResx = imagesx($imgResource);
+		$iResy = imagesy($imgResource);
+		$iSizeKB = (float)$aImage['size'] / 1000;
+		return 1;
+			
+	}
+	
+	public function getImageProperties($sImageFile, &$iResx, &$iResy, &$iSizeKB)
+	{
+		$extension = strtolower(pathinfo($sImageFile, PATHINFO_EXTENSION));
+
+		$imgResource = null;
+		if ($extension == "jpg" || $extension == "jpeg")
+			$imgResource = imagecreatefromjpeg($sImageFile);
+		else if ($extension == "png")
+			$imgResource = imagecreatefrompng($sImageFile);
+		else if ($extension == "gif")
+			$imgResource = imagecreatefromgif($sImageFile);
+		else
+		{
+			$this->setError("Unknown extension!");
+			return 0;
+		}
+		
+		$iResx = imagesx($imgResource);
+		$iResy = imagesy($imgResource);
+		$iSizeKB = $aImage['size'] * 1000;
+		return 1;		
+	}
+	
 	/* Will take $aFile (passed in from $_FILS presumably, needs to be in this
 	format of array), validate the image and place it in $sDest upon validation.
 	Will return the path to the uploaded file upon validation and upload. */
 	public function uploadImage($aFile, $sDest)
 	{
 		$sErrorString = "";
-		if (1 == validateImageUpload($aFile, $sErrorString))
+		if (1 == $this->validateImageUpload($aFile, $sErrorString))
 		{
-			//copy code goes here
-			
+			if (false == copy($aFile['tmp_name'], $sDest))
+			{
+				$this->setError("Couldn't upload image!");
+				return 0;
+			}
+			else
+				return $sDest;
 		}	
 		else
 		{
@@ -154,13 +248,13 @@ class Beemo
 					$imageX = imagesx($imgResource);
 					if ($imageX != false)
 					{
-						if ($aFile['size'] <= ($config['MAX_UPLOAD_SIZE']))
+						if ($aFile['size'] <= ($this->config['MAX_UPLOAD_SIZE']) * 1024) //times 1024 == KB
 						{
 							$sErrorString = "";
 							return 1; //image is valid!
 						}
 						else
-							$sErrorString = "File too large! Max file size ".$config['MAX_UPLOAD_SIZE']." KB.";
+							$sErrorString = "File too large! Max file size ".$this->config['MAX_UPLOAD_SIZE']." KB.";
 					}
 					else
 						$sErrorString = "Invalid image!";
@@ -199,13 +293,19 @@ class Beemo
 	
 	public function sanitizeString($string, $maxLength)
 	{
-		return filter_var(substr($string, 1, $maxLength), FILTER_SANITIZE_STRING);
+		return filter_var(substr($string, 0, $maxLength), FILTER_SANITIZE_STRING);
 	}
 	
 	/* Validates subject, nick, content fields of the post_form. Returns 0 if
 	all passed, number of problems if not. Warnings are passed into $aWarnings. */
-	public function validatePostForm(&$aWarnings, $aPostInput)
+	public function validatePostForm(&$aWarnings, $aPostInput, $formStyle = "THREAD")
 	{
+		$aWarnings = array("subject" => "",
+					"image" => "",
+					"verification" => "",
+					"content" => "",
+					"nick" => "");
+	
 		$fail = 0;
 		if (strlen($aPostInput['nick']) > $this->getConfig('MAX_NICK_LENGTH'))
 		{
@@ -213,38 +313,92 @@ class Beemo
 			$fail++;
 		}
 		
-		if (strlen($aPostInput['subject']) > $this->getConfig('MAX_SUBJECT_LENGTH'))
+		if ($formStyle === "THREAD")
 		{
-			$aWarnings['subject'] = "Max subject length is ".$this->getConfig('MAX_SUBJECT_LENGTH');
-			$fail++;
+			if (strlen($aPostInput['subject']) > $this->getConfig('MAX_SUBJECT_LENGTH'))
+			{
+				$aWarnings['subject'] = "Max subject length is ".$this->getConfig('MAX_SUBJECT_LENGTH');
+				$fail++;
+			}
 		}
 		
-		if (strlen($aPostInput['subject']) > $this->getConfig('MAX_SUBJECT_LENGTH'))
+		if (strlen($aPostInput['content']) > $this->getConfig('MAX_CONTENT_LENGTH'))
 		{
-			$aWarnings['subject'] = "Max subject length is ".$this->getConfig('MAX_SUBJECT_LENGTH');
+			$aWarnings['content'] = "Max content length is ".$this->getConfig('MAX_CONTENT_LENGTH');
+			$fail++;
+		}
+		else if ($aPostInput['content'] == "")
+		{
+			$aWarnings['content'] = "Content is empty!";
 			$fail++;
 		}
 		
 		return $fail;
 	}
 	
-	/* This will search for and delete threads that are past the maximum life
-	span. */
+	/* This will search for and delete threads that havent been posted in for 
+	MAX_THREAD_IDLETIME. It will also delete all the images + thumbs associated 
+	with that thread.
+	
+	This function is intended to be used from a maintainence script, not from
+	the actual board web-pages (not that it CANT be....). */
 	public function pruneThreads()
 	{
-	
+		$threadsPath = $this->getConfig("THREADS_RELATIVE_PATH");
+		$dh = opendir($threadsPath);
+		
+		while ($file = readdir($dh))
+		{
+			if ($file != ".." && $file != "." && $file != " " && $file != ".empty")
+			{
+				//if thread hasn't been posted in for x number of minutes...
+				if (filemtime($threadsPath.$file) < time() - (intval($this->getConfig('MAX_THREAD_IDLETIME') * 60)))
+				{
+					$th = new CSVedit($file, 0);
+					$th->getTable($threadData, 1);
+					$numRows = $th->numRows();
+					for ($i = 0; $i <= $numRows; $i++)
+					{
+						if ($threadData[$i][$this::IMAGE_COL] != "0")
+						{
+							unlink($this->getConfig('IMAGES_RELATIVE_PATH').$threadData[$i][$this::IMAGE_COL]);
+							unlink($this->getConfig('THUMBS_RELATIVE_PATH').$threadData[$i][$this::IMAGE_COL]);
+						}
+					}
+					
+					//finally delete the thread.
+					unlink($threadsPath.$file);
+					echo "Removed thread: ".$file."\n";
+				}
+			}
+		}
 	}
 	
 	/* This will return an array of thread ID's from most recently updated to
 	least recently. */
-	public function getActiveThreads()
+	public function getActiveThreads(&$aThreadList, $sThreadDir)
 	{
-	
+		if (true == is_dir($sThreadDir) && is_readable($sThreadDir))
+		{
+			$dh = opendir($sThreadDir);
+			while ($file = readdir($dh))
+			{
+				if ($file != "." && $file != ".." && $this->isint($file))
+				{
+					$aThreadList[$file] = filemtime($sThreadDir.$file);
+					//echo $file.".".$aThreadList[$file]."<br/>";
+				}
+			}
+			
+			arsort($aThreadList, SORT_REGULAR);
+			//print_r($aThreadList);
+			
+		}
 	}
-	
-	public function displayPostForm($postURL, $mode = 0)
+
+	private function isint($mixed)
 	{
-		//not sure how I want to approach this one yet.
+		return (preg_match( '/^\d*$/', $mixed) == 1);
 	}
 
 }
