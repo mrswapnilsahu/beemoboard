@@ -114,6 +114,7 @@ a:hover, a:active
 }
 
 .post .subject {
+	min-width: 350px;
 	background: #4cbfce;
 	padding: 1px;
 	padding-left: 4px;

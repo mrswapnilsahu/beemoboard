@@ -57,6 +57,8 @@ if (isset($_POST['Post']))
 			{
 				$errs++;
 				$warning['verification'] = "Sorry, your answer was incorrect!";
+				//echo $_POST['verification'].BR;
+				//echo $_SESSION['verification_answer'];
 			}
 		}
 	}
@@ -99,17 +101,40 @@ include TEMPLATES_PATH.'post_form.php';
 
 ?>
 <div id="post_container">
-<pre>
 <?php
 
-/* Modify this method to re-index the returned thread list so that it can be 
+/* TODO Modify this method to re-index the returned thread list so that it can be 
 iterated through more easily as this section would prefer. */
 $bmo->getActiveThreads($aThreadList, THREADS_PATH);
-print_r($aThreadList);
 
-$thread->selectThread(1);
-$thread->getThreadPreview($pp);
-print_r($pp);
+$numThreads = count($aThreadList);
+for ($i = 0; $i < $numThreads; $i++)
+{
+	$thread->selectThread($aThreadList[$i]);
+	$thread->getThreadPreview($aPosts);
+	
+	$numPosts = count($aPosts);
+	for ($x = 0; $x < $numPosts; $x++)
+	{				
+		if ($x == 0)
+		{
+			/* I feel like this is a messy way to handle the "subject", but it works
+			for now. */
+			$thread_post = $aPosts[++$x];
+			$thread_post['subject'] = $aPosts[0][$thread::SUBJECT_COL];
+			$thread_post['threadid'] = $aPosts[0][$thread::THREADID_COL];
+			include TEMPLATES_PATH."thread_op.php";
+		}
+		else
+		{	
+			$thread_post = $aPosts[$x];
+			include TEMPLATES_PATH.'thread_post.php';
+		}
+	}
+	
+	echo "<div class=\"separator\"></div>";
+	unset($aPosts);
+}
 
 ?>
 </div>

@@ -5,7 +5,7 @@
 	<? if ($formStyle == "THREAD")
 	{
 	?>
-	<a class="aright" href="nowhere">Reply</a>
+	<a class="aright" href="viewthread.php?id=<? echo $thread_post['threadid'] ?>">Reply</a>
 	<?
 	}
 	?>

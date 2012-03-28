@@ -377,7 +377,7 @@ class Beemo
 	
 	/* This will return an array of thread ID's from most recently updated to
 	least recently. */
-	public function getActiveThreads(&$aThreadList, $sThreadDir)
+	public function getActiveThreads(&$aActiveThreadList, $sThreadDir)
 	{
 		if (true == is_dir($sThreadDir) && is_readable($sThreadDir))
 		{
@@ -387,12 +387,15 @@ class Beemo
 				if ($file != "." && $file != ".." && $this->isint($file))
 				{
 					$aThreadList[$file] = filemtime($sThreadDir.$file);
-					//echo $file.".".$aThreadList[$file]."<br/>";
 				}
 			}
 			
 			arsort($aThreadList, SORT_REGULAR);
-			//print_r($aThreadList);
+			$i = 0;
+			foreach ($aThreadList as $key => $value)
+			{
+				$aActiveThreadList[$i++] = $key;
+			}
 		}
 	}
 	
