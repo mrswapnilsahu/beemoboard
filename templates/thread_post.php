@@ -8,7 +8,7 @@
 	if ($thread_post['image'] != "0")
 	{
 		echo "<br/>";
-		echo "File: ";
+		echo "Image: ";
 		echo "<a href=\"".IMAGES_RELATIVE_PATH.$thread_post['image']."\"/>".$thread_post['image']."</a> ";
 		echo $thread_post['image_resx']."x".$thread_post['image_resy'].", ";
 		echo $thread_post['image_size']." KB";

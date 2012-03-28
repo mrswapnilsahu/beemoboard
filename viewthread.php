@@ -95,6 +95,7 @@ if (isset($_POST['Post']))
 		$thread->addPostArray($postInput);
 		unset($_POST);
 		$msg = "Posted!";
+		//should redirect and use $_GET to avoid refresh issues
 	}
 	
 }
