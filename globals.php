@@ -10,7 +10,7 @@ if (DEBUG == 1)
 
 //global strings
 define("SITE_NAME", "Beemoboard");
-define("VERSION_STRING", "Version 0.1 (Alpha), March 28, 2012 (gitpull, yeah!)");
+define("VERSION_STRING", "Version 0.1 (Alpha), March 28, 2012");
 define("BR", "<br/>");
 
 define("ROOT_PATH", dirname(__FILE__).'/');
