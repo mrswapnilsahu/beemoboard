@@ -37,13 +37,13 @@ a:hover, a:active
 
 #header a:link, #header a:visited
 {
-	color: #000000;
+	color: #4cbfce;
 	text-decoration: none;
 }
 
 #header a:hover, #header a:active
 {
-	color: #4477EE;
+	color: #4cbfce;
 	text-decoration: underline;
 }
 
@@ -151,7 +151,7 @@ a:hover, a:active
 .separator {
 	padding-top: 4px;
 	padding-bottom: 4px;
-	border-top: 1px dashed #333333;
+	border-top: 1px solid #4cbfce;
 }
 
 .aleft {

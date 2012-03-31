@@ -14,6 +14,18 @@ $bmo = new Beemo(DB_PATH."defaultconfig.csv");
 
 $thread = new Thread(THREADS_PATH);
 
+if (isset($_GET['page']))
+{
+	if (isint($_GET['page']))
+	{
+		$indexPage = $_GET['page'];
+	}
+	else
+		header("Location: ".E404_PAGE);
+}
+else
+	$indexPage = 1;
+
 /*Here begins code that will take form input and post it. */
 if (isset($_POST['Post']))
 {	
@@ -106,9 +118,19 @@ include TEMPLATES_PATH.'post_form.php';
 /* TODO Modify this method to re-index the returned thread list so that it can be 
 iterated through more easily as this section would prefer. */
 $bmo->getActiveThreads($aThreadList, THREADS_PATH);
-
 $numThreads = count($aThreadList);
-for ($i = 0; $i < $numThreads; $i++)
+
+//10 per page
+$rangeStart = ($indexPage - 1) * 10;
+
+if ($numThreads < $rangeStart + 10)
+	$rangeEnd = $numThreads;
+else
+	$rangeEnd = $rangeStart + 10;
+
+$numPages = ceil($numThreads / 10);
+
+for ($i = $rangeStart; $i < $rangeEnd; $i++)
 {
 	$thread->selectThread($aThreadList[$i]);
 	$thread->getThreadPreview($aPosts);
@@ -134,6 +156,12 @@ for ($i = 0; $i < $numThreads; $i++)
 	
 	echo "<div class=\"separator\"></div>";
 	unset($aPosts);
+}
+
+//display page links
+for ($i = 1; $i <= $numPages; $i++)
+{
+	echo "<a href=\"index.php?page=$i\">$i </a>";
 }
 
 ?>
