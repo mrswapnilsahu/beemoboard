@@ -108,6 +108,7 @@ a:hover, a:active
 	min-width: 250px;
 	min-height: 40px;
 	/*background: #1ae9fc;*/
+	margin-top: 4px;
 	margin-bottom: 4px;
 	/*margin-left: 8px;*/
 	padding: 0px;
@@ -157,8 +158,8 @@ a:hover, a:active
 }
 
 .separator {
-	padding-top: 4px;
-	padding-bottom: 4px;
+	margin-top: 4px;
+	margin-bottom: 4px;
 	border-top: 1px solid #4cbfce;
 }
 

@@ -345,6 +345,9 @@ class Beemo
 	the actual board web-pages (not that it CANT be....). */
 	public function pruneThreads()
 	{
+		/* TODO: Decide whether deleteThread() function should be used 
+		over current method. Inlining all this code is probably faster. */
+	
 		$threadsPath = $this->getConfig("THREADS_RELATIVE_PATH");
 		$dh = opendir($threadsPath);
 		
@@ -357,10 +360,16 @@ class Beemo
 				{
 					$th = new CSVedit($file, 0);
 					$th->getTable($threadData, 1);
+					if (!isset($threadData))
+						return 0; //fail case
+					
 					$numRows = $th->numRows();
 					for ($i = 0; $i <= $numRows; $i++)
 					{
-						if ($threadData[$i][$this::IMAGE_COL] != "0")
+						//All this checking to avoid "undefined offset" warnings.
+						if (isset($threadData[$i][$this::IMAGE_COL]) &&
+							$threadData[$i][$this::IMAGE_COL] != "0" && 
+							$threadData[$i][$this::IMAGE_COL] != 0)
 						{
 							unlink($this->getConfig('IMAGES_RELATIVE_PATH').$threadData[$i][$this::IMAGE_COL]);
 							unlink($this->getConfig('THUMBS_RELATIVE_PATH').$threadData[$i][$this::IMAGE_COL]);
@@ -373,6 +382,33 @@ class Beemo
 				}
 			}
 		}
+	}
+	
+	/* Deletes thread $id and all associated data (thumbs, images, posts). */
+	public function deleteThread($id)
+	{
+		$threadPath = $this->getConfig("THREADS_RELATIVE_PATH").$id;
+		$th = new CSVedit($threadPath, 0);
+		$th->getTable($threadData, 1);
+		if (!isset($threadData))
+			return 0; //fail case
+			
+		$numRows = count($threadData);
+		for ($i = 0; $i <= $numRows; $i++)
+		{
+			//All this checking to avoid "undefined offset" warnings.
+			if (isset($threadData[$i][$this::IMAGE_COL]) &&
+				$threadData[$i][$this::IMAGE_COL] != "0" && 
+				$threadData[$i][$this::IMAGE_COL] != 0)
+			{
+				unlink($this->getConfig('IMAGES_RELATIVE_PATH').$threadData[$i][$this::IMAGE_COL]);
+				unlink($this->getConfig('THUMBS_RELATIVE_PATH').$threadData[$i][$this::IMAGE_COL]);
+			}
+		}
+		
+		//finally delete the thread.
+		unlink($threadPath);
+		return 1;
 	}
 	
 	/* This will return an array of thread ID's from most recently updated to
@@ -414,6 +450,8 @@ class Beemo
 		return $numThreads;
 	}
 
+	/* Uses a regular expression to determine if the data passed in is a valid
+	integer via characters, rather than datatype. */
 	private function isint($mixed)
 	{
 		return (preg_match( '/^\d*$/', $mixed) == 1);
