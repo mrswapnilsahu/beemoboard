@@ -37,7 +37,7 @@ a:hover, a:active
 
 #header a:link, #header a:visited
 {
-	color: #4cbfce;
+	color: #000000;
 	text-decoration: none;
 }
 
@@ -94,6 +94,14 @@ a:hover, a:active
 	padding: 8px;
 	margin: 0 auto;
 	background: #ceffef;
+}
+
+#post_container u {
+	color: #4cbfce;
+}
+
+.pagelist {
+	color: #000000;
 }
 
 .post {

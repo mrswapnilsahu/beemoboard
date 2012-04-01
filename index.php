@@ -159,9 +159,13 @@ for ($i = $rangeStart; $i < $rangeEnd; $i++)
 }
 
 //display page links
+//TODO: display previous/next buttons
 for ($i = 1; $i <= $numPages; $i++)
 {
-	echo "<a href=\"index.php?page=$i\">$i </a>";
+	if ($i == $indexPage)
+		echo "<u><a class=\"pagelist\" href=\"index.php?page=$i\">[$i]</a></u>";
+	else
+		echo "<a class=\"pagelist\" href=\"index.php?page=$i\">[$i]</a>";
 }
 
 ?>
