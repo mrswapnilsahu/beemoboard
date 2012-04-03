@@ -40,6 +40,8 @@ class Beemo
 	const CONTENT_COL = 7;
 	const TIME_COL = 8;
 	
+	const KILO = 1024;
+	
 	/* Constructor, will load a non-default config if path is supplied. */
 	public function __construct($configFile = 0)
 	{
@@ -172,7 +174,7 @@ class Beemo
 		
 		$iResx = imagesx($imgResource);
 		$iResy = imagesy($imgResource);
-		$iSizeKB = (float)$aImage['size'] / 1000;
+		$iSizeKB = (float)$aImage['size'] / $this::KILO;
 		return 1;
 			
 	}
@@ -196,7 +198,7 @@ class Beemo
 		
 		$iResx = imagesx($imgResource);
 		$iResy = imagesy($imgResource);
-		$iSizeKB = $aImage['size'] * 1000;
+		$iSizeKB = $aImage['size'] * $this::KILO;
 		return 1;		
 	}
 	
@@ -249,7 +251,7 @@ class Beemo
 					$imageX = imagesx($imgResource);
 					if ($imageX != false)
 					{
-						if ($aFile['size'] <= ($this->config['MAX_UPLOAD_SIZE']) * 1024) //times 1024 == KB
+						if ($aFile['size'] <= ($this->config['MAX_UPLOAD_SIZE']) * $this::KILO)
 						{
 							$sErrorString = "";
 							return 1; //image is valid!
@@ -433,6 +435,15 @@ class Beemo
 				$aActiveThreadList[$i++] = $key;
 			}
 		}
+	}
+	
+	//Will return the least recently posted in thread ID
+	public function getMostDeadThread()
+	{
+		/*TODO if warranted, speed this up by inlining the process instead of 
+		relying on another function in the class. */
+		$this->getActiveThreads($threadList, $this->getConfig('THREADS_RELATIVE_PATH'));
+		return $threadList[count($threadList) - 1];
 	}
 	
 	/* Will return the number of threads that currently exist. */

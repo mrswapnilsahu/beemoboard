@@ -36,6 +36,7 @@ if (isset($_POST['Post']))
 	$errs = 0;
 	if ($bmo->numThreads() < $bmo->getConfig('MAX_THREADS'))
 	{
+		processpost:
 		if (0 == $bmo->validatePostForm($warning, $_POST, "THREAD"))
 		{
 			if ($_SESSION['verification_answer'] == $_POST['verification'])
@@ -78,8 +79,11 @@ if (isset($_POST['Post']))
 	{
 		/* TODO: Rather than just telling the user that the thread limit is
 		reached, delete the oldest thread and spawn a new one. */
-		$errs++;
-		$msg = "Maximum number of threads has been reached! Please wait for one to 404.";
+		//$errs++;
+		//$msg = "Maximum number of threads has been reached! Please wait for one to 404.";
+		
+		$bmo->deleteThread($bmo->getMostDeadThread());
+		goto processpost; //XXX BAD BAD BAD BAD BAD BAD JUST FOR TESTING
 	}
 	
 	//if everything passed, put the post in the file.

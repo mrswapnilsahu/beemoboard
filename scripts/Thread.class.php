@@ -228,6 +228,12 @@ class Thread extends Beemo
 		$aOutArray[$this::TIME_COL] = $aInArray['time'];
 	}
 	
+	//Deletes the currently selected thread.
+	public function deleteMe()
+	{
+		$this->deleteThread($this->selectThreadID);
+	}
+	
 }
 
 ?>
