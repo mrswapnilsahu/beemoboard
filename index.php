@@ -154,20 +154,39 @@ for ($i = $rangeStart; $i < $rangeEnd; $i++)
 		}
 	}
 	
-	echo "<div class=\"separator\"></div>";
+	if ($i < $rangeEnd - 1)
+		echo "<div class=\"separator\"></div>";
+		
 	unset($aPosts);
 }
 
+//end of post display area
+?> 
+</div>
+<div id="page_nav">
+<? //start of page numbering
+
 //display page links
-//TODO: display previous/next buttons
+
+if ($indexPage > 1)
+{
+	$pp = $indexPage - 1;
+	echo "<a href=\"index.php?page=$pp\">[Previous]</a>";
+}
+
 for ($i = 1; $i <= $numPages; $i++)
 {
 	if ($i == $indexPage)
-		echo "<u><a class=\"pagelist\" href=\"index.php?page=$i\">[$i]</a></u>";
+		echo "<b><a class=\"selected\" href=\"index.php?page=$i\">[$i]</a></b>";
 	else
-		echo "<a class=\"pagelist\" href=\"index.php?page=$i\">[$i]</a>";
+		echo "<a href=\"index.php?page=$i\">[$i]</a>";
 }
 
+if ($indexPage < $numPages)
+{
+	$np = $indexPage + 1;
+	echo "<a href=\"index.php?page=$np\">[Next]</a>";
+}
 ?>
 </div>
 <?

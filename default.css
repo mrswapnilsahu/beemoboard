@@ -96,8 +96,22 @@ a:hover, a:active
 	background: #ceffef;
 }
 
-#post_container u {
+#page_nav {
+	border-bottom: 1px solid #000000;
+	background: #ceffef;
+	padding: 4px;
+}
+
+#page_nav a:link, a:visited, a:hover, a:active {
+	color: #6ccfce;
+}
+
+#page_nav u {
 	color: #4cbfce;
+}
+
+#page_nav .selected {
+	color: #6ccfce;
 }
 
 .pagelist {
