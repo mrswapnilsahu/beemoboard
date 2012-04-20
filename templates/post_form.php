@@ -1,4 +1,12 @@
 <? 
+//post to whatever includes this file
+if ($_SERVER['QUERY_STRING'] === "" || 
+	$_SERVER['QUERY_STRING'] == NULL)
+	$postURL = $_SERVER['PHP_SELF'];
+else
+	$postURL = $_SERVER['PHP_SELF']."?".$_SERVER['QUERY_STRING'];
+
+
 //this is to shut up the notices 
 //TODO: should be removed when everything is finished
 if (false == isset($warning))
