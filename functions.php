@@ -173,10 +173,12 @@ function processNewPostForm()
 	/*End posting code. */
 }
 
-function displayThreadPreviews($numToShow, $indexPage, $formStyle)
+function displayThreadPreviews($indexPage, $formStyle)
 {
 	global $bmo;
 	global $thread;
+	
+	$numToShow = $bmo->getConfig('THREADS_PER_PAGE');
 	
 	$bmo->getActiveThreads($aThreadList, THREADS_PATH);
 	$numThreads = count($aThreadList);
@@ -222,12 +224,14 @@ function displayThreadPreviews($numToShow, $indexPage, $formStyle)
 	}
 }
 
-function displayPagesNavigation($threadsPerPage, $indexPage)
+function displayPagesNavigation($indexPage)
 {
 	global $bmo;
 
 	//start of page numbering
 	//display page links
+	
+	$threadsPerPage = $bmo->getConfig('THREADS_PER_PAGE');
 
 	$numPages = ceil($bmo->numThreads() / $threadsPerPage);
 

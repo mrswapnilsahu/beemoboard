@@ -1,6 +1,6 @@
 <?php
-
 require_once 'functions.php';
+$bench = new Timer(1);
 
 if (isset($_GET['id']))
 {
@@ -47,4 +47,5 @@ if (isset($msg))
 include TEMPLATES_PATH.'footer.php';
 include TEMPLATES_PATH.'meta-end.php';
 
+echo "Finished EVERYTHING in ".$bench->getElapsedTime()." seconds.";
 ?>

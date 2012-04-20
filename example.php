@@ -39,6 +39,10 @@ Verification goes here. <br>
 </FORM>
 </div>
 
+<div id="motd_container">
+	<h2>MOTD Here!</h2>
+</div>
+
 <div id="post_container">
 
 	<div class="post">

@@ -1,5 +1,6 @@
 <?php
 include 'functions.php';
+$bench = new Timer(1);
 
 if (isset($_GET['page']))
 {
@@ -27,15 +28,15 @@ include TEMPLATES_PATH.'header.php';
 /* Body here (posts, input form, etc.) */
 $formStyle = "THREAD";
 include TEMPLATES_PATH.'post_form.php';
+include TEMPLATES_PATH.'motd.php';
 ?>
 <div id="post_container">
 <?php
-$threadsPerPage = 10;
-displayThreadPreviews($threadsPerPage, $indexPage, $formStyle);
+displayThreadPreviews($indexPage, $formStyle);
 ?> 
 </div>
 <div id="page_nav">
-<? displayPagesNavigation($threadsPerPage, $indexPage); ?>
+<? displayPagesNavigation($indexPage); ?>
 </div>
 <?
 
@@ -43,4 +44,5 @@ displayThreadPreviews($threadsPerPage, $indexPage, $formStyle);
 include TEMPLATES_PATH.'footer.php';
 include TEMPLATES_PATH.'meta-end.php';
 
+echo "Finished EVERYTHING in ".$bench->getElapsedTime()." seconds.";
 ?>
