@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<title><? echo $pageName ?></title>
+<title><? echo $bmo->getConfig('BOARD_TITLE'); ?></title>
 <meta name="keywords" content="" />
 <meta name="description" content="" />
 <link href="<? 

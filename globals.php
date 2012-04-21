@@ -18,11 +18,13 @@ define("IMAGES_PATH", ROOT_PATH."images/");
 define("THUMBS_PATH", ROOT_PATH."thumbs/");
 define("IMAGES_RELATIVE_PATH", "images/");
 define("THUMBS_RELATIVE_PATH", "thumbs/");
+define("THEMES_RELATIVE_PATH", "themes/");
 define("SCRIPTS_PATH", ROOT_PATH."scripts/");
 define("DB_PATH", ROOT_PATH."db/");
 define("THREADS_PATH", ROOT_PATH."threads/");
 define("INCLUDES_PATH", ROOT_PATH."templates/");
 define("TEMPLATES_PATH", ROOT_PATH."templates/");
+define("THEMES_PATH", ROOT_PATH."themes/");
 define("MAX_UPLOAD_SIZE", 1024);
 define("KILO", 1000);
 

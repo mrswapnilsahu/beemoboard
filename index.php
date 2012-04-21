@@ -1,5 +1,5 @@
 <?php
-include 'functions.php';
+require_once 'functions.php';
 $bench = new Timer(1);
 
 if (isset($_GET['page']))
@@ -20,15 +20,14 @@ $queri = new Querificator();
 $_SESSION['verification_answer'] = $queri->generateQuestion($post_form['verification']);
 $_POST['verification'] = "";
 
-$pageName = $bmo->getConfig('BOARD_TITLE');
-include TEMPLATES_PATH.'meta.php';
-include TEMPLATES_PATH.'navigation.php';
-include TEMPLATES_PATH.'header.php';
+includeThemeElement('meta.php');
+includeThemeElement('navigation.php');
+includeThemeElement('header.php');
 
 /* Body here (posts, input form, etc.) */
 $formStyle = "THREAD";
-include TEMPLATES_PATH.'post_form.php';
-include TEMPLATES_PATH.'motd.php';
+includeThemeElement('post_form.php');
+includeThemeElement('motd.php');
 ?>
 <div id="post_container">
 <?php
@@ -41,8 +40,8 @@ displayThreadPreviews($indexPage, $formStyle);
 <?
 
 /* Body ends */
-include TEMPLATES_PATH.'footer.php';
-include TEMPLATES_PATH.'meta-end.php';
+includeThemeElement('footer.php');
+includeThemeElement('meta-end.php');
 
 echo "Finished EVERYTHING in ".$bench->getElapsedTime()." seconds.";
 ?>

@@ -208,12 +208,12 @@ function displayThreadPreviews($indexPage, $formStyle)
 				$thread_post = $aPosts[++$x];
 				$thread_post['subject'] = $aPosts[0][$thread::SUBJECT_COL];
 				$thread_post['threadid'] = $aPosts[0][$thread::THREADID_COL];
-				include TEMPLATES_PATH."thread_op.php";
+				include $bmo->getConfig('THEMES_RELATIVE_PATH').$bmo->getConfig('ACTIVE_THEME_RELATIVE_PATH')."thread_op.php";
 			}
 			else
 			{	
 				$thread_post = $aPosts[$x];
-				include TEMPLATES_PATH.'thread_post.php';
+				include $bmo->getConfig('THEMES_RELATIVE_PATH').$bmo->getConfig('ACTIVE_THEME_RELATIVE_PATH').'thread_post.php';
 			}
 		}
 	
@@ -271,14 +271,20 @@ function displayThreadPosts()
 			$thread_post = $aPosts[++$i];
 			$thread_post['subject'] = $aPosts[0][$thread::SUBJECT_COL];
 			$thread_post['threadid'] = $aPosts[0][$thread::THREADID_COL];
-			include TEMPLATES_PATH."thread_op.php";
+			include $bmo->getConfig('THEMES_RELATIVE_PATH').$bmo->getConfig('ACTIVE_THEME_RELATIVE_PATH')."thread_op.php";
 		}
 		else
 		{	
 			$thread_post = $aPosts[$i];
-			include TEMPLATES_PATH.'thread_post.php';
+			include $bmo->getConfig('THEMES_RELATIVE_PATH').$bmo->getConfig('ACTIVE_THEME_RELATIVE_PATH').'thread_post.php';
 		}
 	}
+}
+
+function includeThemeElement($file)
+{
+	global $bmo;
+	include $bmo->getConfig('THEMES_RELATIVE_PATH').$bmo->getConfig('ACTIVE_THEME_RELATIVE_PATH').$file;
 }
 
 ?>

@@ -23,10 +23,13 @@ class Beemo
 							'MAX_THREAD_IDLETIME' => 10080, //in minutes 
 							'MAX_UPLOAD_SIZE' => 512, //in KB
 							'THREADS_PER_PAGE' => 10, 
+							'ACTIVE_THEME' => "default",
+							'ACTIVE_THEME_RELATIVE_PATH' => "default/",
 							'IMAGES_RELATIVE_PATH' => "images/",
 							'THUMBS_RELATIVE_PATH' => "thumbs/",
 							'THREADS_RELATIVE_PATH' => "threads/",
-							'TEMPLATES_RELATIVE_PATH' => "templates/"
+							'TEMPLATES_RELATIVE_PATH' => "templates/",
+							'THEMES_RELATIVE_PATH' => "themes/",
 							); 
 							
 	const SUBJECT_COL = 0;
