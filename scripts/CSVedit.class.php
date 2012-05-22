@@ -21,6 +21,7 @@ class CSVedit
 	private $sTempFilePath;
 	private $sLockFile;
 	private $bHasLock;
+	private $sCSVdelimiter;
 	
 	private $iNumColumns;
 	private $aColumnNames;
@@ -56,17 +57,17 @@ class CSVedit
 	}	
 	
 	/*Selects the CSV file to edit.*/
-	public function selectCSVfile($sCSVfile, $bCreate)
+	public function selectCSVfile($sCSVfile, $bCreate = 1, $sDelimiter = ",")
 	{
+		/*TODO: Probably a way to shorten this function given that there is some
+		duplicate code. */
+	
 		if(file_exists($sCSVfile))
 		{
 			$this->sCSVfile = $sCSVfile;
 			$this->sTempFilePath = dirname(realpath($this->sCSVfile))."/temp.csv";
-			//$this->sLockFile = dirname(realpath($this->sCSVfile))."/".$sCSVfile."_lock";
 			$this->sLockFile = $this->sCSVfile."_lock";
-			//echo $this->sCSVfile.BR;
-			//echo $this->sTempFilePath.BR;
-			//echo $this->sLockFile.BR;
+			$this->sCSVdelimiter = $sDelimiter;
 			
 			$aColumnNames = $this->getColumnNames();
 			
@@ -88,12 +89,9 @@ class CSVedit
 				{
 					$this->sCSVfile = $sCSVfile;
 					$this->sTempFilePath = dirname(realpath($this->sCSVfile))."/temp.csv";
-					//$this->sLockFile = dirname(realpath($this->sCSVfile))."/".$sCSVfile."_lock";
 					$this->sLockFile = $this->sCSVfile."_lock";
+					$this->sCSVdelimiter = $sDelimiter;
 					
-					//echo $this->sCSVfile.BR;
-					//echo $this->sTempFilePath.BR;
-					//echo $this->sLockFile.BR;
 					return 1;
 				}
 				else
@@ -119,7 +117,7 @@ class CSVedit
 		if ($this->acquireLock())
 		{
 			$fp = fopen($this->sCSVfile, "r");
-			while ($aTempData = fgetcsv($fp))
+			while ($aTempData = fgetcsv($fp, 0, $this->sCSVdelimiter))
 			{
 				$i++;
 			}
@@ -143,7 +141,7 @@ class CSVedit
 		if ($this->acquireLock())
 		{
 			$fp = fopen($this->sCSVfile, "r");
-			$aTempData = fgetcsv($fp);
+			$aTempData = fgetcsv($fp, 0, $this->sCSVdelimiter);
 			fclose($fp);
 			$this->releaseLock();
 			return $aTempData;
@@ -163,7 +161,7 @@ class CSVedit
 		if ($this->acquireLock())
 		{
 			$fp = fopen($this->sCSVfile, "r");
-			while ($aTempData = fgetcsv($fp))
+			while ($aTempData = fgetcsv($fp, 0, $this->sCSVdelimiter))
 			{
 				if ($i == $iRow)
 				{		
@@ -196,7 +194,7 @@ class CSVedit
 		
 			$row = 0;
 			$index = 0;
-			while ($aTempData = fgetcsv($fp))
+			while ($aTempData = fgetcsv($fp, 0, $this->sCSVdelimiter))
 			{			
 				if ($row >= $iStartRow && $row <= $iEndRow)
 				{
@@ -261,10 +259,10 @@ class CSVedit
 			$fp = fopen($this->sCSVfile, "r");
 		
 			if ($bIncludeColumnNames == 0)
-				$aNoData = fgetcsv($fp);
+				$aNoData = fgetcsv($fp, 0, $this->sCSVdelimiter);
 		
 			$i = 0;
-			while ($aTempData = fgetcsv($fp))
+			while ($aTempData = fgetcsv($fp, 0, $this->sCSVdelimiter))
 			{			
 				$aReturnTable[$i] = $aTempData;	
 				$i++;		

@@ -74,7 +74,7 @@ class Beemo
 	{
 		if (true == file_exists($configFile) && true == is_readable($configFile))
 		{
-			$this->configdb = new CSVedit($configFile, 0);	
+			$this->configdb = new CSVedit($configFile, 0, "=");	
 		
 			foreach ($this->config as $key => $value)
 			{

@@ -9,7 +9,7 @@ require_once SCRIPTS_PATH."Querificator.class.php";
 require_once SCRIPTS_PATH."misc.php";
 
 session_start();
-$bmo = new Beemo(DB_PATH."defaultconfig.csv");
+$bmo = new Beemo(DB_PATH."defaultconfig.cfg");
 $thread = new Thread(THREADS_PATH);
 
 function processNewThreadForm()
@@ -173,6 +173,13 @@ function processNewPostForm()
 	/*End posting code. */
 }
 
+function processInputForm()
+{
+	/* This will be the generic "catch-all" function for processing the input form 
+	to create threads or posts. Combine the code from the two above functions into 
+	this one. And don't do a shitty job this time. */
+}
+
 function displayThreadPreviews($indexPage, $formStyle)
 {
 	global $bmo;
@@ -259,6 +266,7 @@ function displayPagesNavigation($indexPage)
 function displayThreadPosts()
 {
 	global $thread;
+	global $bmo;
 	$formStyle = "POST";	
 	
 	$numPosts = $thread->getAllPosts($aPosts);
